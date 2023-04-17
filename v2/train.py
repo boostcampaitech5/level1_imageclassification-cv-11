@@ -214,7 +214,7 @@ def train(data_dir, model_dir, args):
         train_loader = DataLoader(
             train_sets[k],
             batch_size=args.batch_size,
-            num_workers=multiprocessing.cpu_count() // 2,
+            num_workers=multiprocessing.cpu_count() // 3,
             shuffle=True,
             pin_memory=use_cuda,
             drop_last=True,
@@ -223,7 +223,7 @@ def train(data_dir, model_dir, args):
         val_loader = DataLoader(
             val_sets[k],
             batch_size=args.valid_batch_size,
-            num_workers=multiprocessing.cpu_count() // 2,
+            num_workers=multiprocessing.cpu_count() // 3,
             shuffle=False,
             pin_memory=use_cuda,
             drop_last=True,
@@ -292,11 +292,15 @@ def train(data_dir, model_dir, args):
 =======
         for idx, train_batch in enumerate(train_loader):
 <<<<<<< HEAD
+<<<<<<< HEAD
             inputs, labels = train_batch
             inputs = inputs.to(device)
 >>>>>>> c1eb4f8... add baselinev2
 =======
             inputs, labels,_ = train_batch
+=======
+            inputs, labels, _ = train_batch
+>>>>>>> d606e02... fix: too may values to unpack for validation dataset
             inputs = inputs['image'].to(device)
 >>>>>>> 1d55337... + _, image
 >>>>>>> d3493d5... + _, image
@@ -337,10 +341,28 @@ def train(data_dir, model_dir, args):
             val_acc_items = []
             figure = None
             for val_batch in val_loader:
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> e2bae17... fix: too may values to unpack for validation dataset
                 inputs, labels, _ = val_batch
                 inputs = inputs['image'].to(device)
                 labels = labels.to(device)
                 
+<<<<<<< HEAD
+=======
+=======
+                inputs, labels = val_batch
+                inputs = inputs.to(device)
+=======
+                inputs, labels, _ = val_batch
+                inputs = inputs['image'].to(device)
+>>>>>>> d606e02... fix: too may values to unpack for validation dataset
+                labels = labels.to(device)
+
+>>>>>>> c1eb4f8... add baselinev2
+>>>>>>> e2bae17... fix: too may values to unpack for validation dataset
                 outs = model(inputs)
                 preds = torch.argmax(outs, dim=-1)
 
@@ -362,6 +384,7 @@ def train(data_dir, model_dir, args):
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             val_acc = np.mean(val_acc_items)
 =======
             val_acc = np.sum(val_acc_items) / len(val_set)
@@ -369,7 +392,13 @@ def train(data_dir, model_dir, args):
 =======
             val_acc = np.sum(val_acc_items) / len(val_sets)
 >>>>>>> 04c4854... add timm efficientbase
+<<<<<<< HEAD
 >>>>>>> ebd1120... add timm efficientbase
+=======
+=======
+            val_acc = np.sum(val_acc_items) / len(val_set)
+>>>>>>> d606e02... fix: too may values to unpack for validation dataset
+>>>>>>> e2bae17... fix: too may values to unpack for validation dataset
             best_val_loss = min(best_val_loss, val_loss)
             if val_acc > best_val_acc:
                 print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
