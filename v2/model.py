@@ -408,6 +408,7 @@ class ViTSmall_Patch16_384(nn.Module):
 
         return out
 
+
 # class MultiLabelModel(nn.module):
 #     def __init__(self):
 #         super().__init__()
