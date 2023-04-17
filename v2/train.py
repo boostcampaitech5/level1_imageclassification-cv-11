@@ -182,8 +182,8 @@ def train(data_dir, model_dir, args):
         loss_value = 0
         matches = 0
         for idx, train_batch in enumerate(train_loader):
-            inputs, labels = train_batch
-            inputs = inputs.to(device)
+            inputs, labels,_ = train_batch
+            inputs = inputs['image'].to(device)
             labels = labels.to(device)
 
             optimizer.zero_grad()
