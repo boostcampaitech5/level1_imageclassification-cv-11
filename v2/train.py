@@ -293,6 +293,7 @@ def train(data_dir, model_dir, args):
     train_loader, val_loader = fold(i)
     
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
+<<<<<<< HEAD
     model = model_module(num_classes=num_classes).to(device)
 <<<<<<< HEAD
 >>>>>>> b41054b... split
@@ -322,6 +323,9 @@ def train(data_dir, model_dir, args):
 >>>>>>> b41054b... split
 =======
     if ('EfficientBase' == args.model):
+=======
+    if ('EfficientBase' == args.model or 'ViTTiny_Patch16_384' == args.model):
+>>>>>>> 526cac6... feat: implement vit_tiny_patch16_model
         model = model_module(num_classes=num_classes).to(device)
     else:
         model = model_module().to(device)
