@@ -103,6 +103,17 @@ class AgeLabels(int, Enum):
             return cls.MIDDLE
         else:
             return cls.OLD
+         
+class AgeNumLabels(int, Enum):
+
+    @classmethod
+    def from_number(cls, value: str) -> int:
+        try:
+            value = int(value)
+        except Exception:
+            raise ValueError(f"Age value should be numeric, {value}")
+
+        return value
 
 
 class MaskBaseDataset(Dataset):
@@ -122,6 +133,7 @@ class MaskBaseDataset(Dataset):
     mask_labels = []
     gender_labels = []
     age_labels = []
+    age_num_labels= []
     multi_class_label = []
 
     def __init__(self, data_dir, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
@@ -152,11 +164,13 @@ class MaskBaseDataset(Dataset):
                 id, gender, race, age = profile.split("_")
                 gender_label = GenderLabels.from_str(gender)
                 age_label = AgeLabels.from_number(age)
+                age_num_label = AgeNumLabels.from_number(age)
 
                 self.image_paths.append(img_path)
                 self.mask_labels.append(mask_label)
                 self.gender_labels.append(gender_label)
                 self.age_labels.append(age_label)
+                self.age_num_labels.append(age_num_label)
                 self.multi_class_label.append(mask_label * 6 + gender_label * 3 + age_label)
 
     def calc_statistics(self):
@@ -183,10 +197,11 @@ class MaskBaseDataset(Dataset):
         mask_label = self.get_mask_label(index)
         gender_label = self.get_gender_label(index)
         age_label = self.get_age_label(index)
+        age_num_label = self.get_age_num_label(index)
         multi_class_label = self.multi_class_label[index]
 
         image_transform = self.transform(image)
-        return image_transform, multi_class_label
+        return image_transform, multi_class_label, age_num_label
 
     def __len__(self):
         return len(self.image_paths)
@@ -200,6 +215,9 @@ class MaskBaseDataset(Dataset):
     def get_age_label(self, index) -> AgeLabels:
         return self.age_labels[index]
 
+    def get_age_num_label(self,index) -> AgeNumLabels:
+        return self.age_num_labels[index]
+    
     def read_image(self, index):
         image_path = self.image_paths[index]
         return np.array(Image.open(image_path))
@@ -288,11 +306,15 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
                     id, gender, race, age = profile.split("_")
                     gender_label = GenderLabels.from_str(gender)
                     age_label = AgeLabels.from_number(age)
+                    age_num_label = AgeNumLabels.from_number(age)
+
 
                     self.image_paths.append(img_path)
                     self.mask_labels.append(mask_label)
                     self.gender_labels.append(gender_label)
                     self.age_labels.append(age_label)
+                    self.age_num_labels.append(age_num_label)
+
 
                     self.indices[phase].append(cnt)
                     cnt += 1
