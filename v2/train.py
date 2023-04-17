@@ -287,6 +287,19 @@ def train(data_dir, model_dir, args):
         for idx, train_batch in tqdm(enumerate(train_loader)):
             inputs, labels, _ = train_batch
             inputs = inputs['image'].to(device)
+<<<<<<< HEAD
+=======
+=======
+        for idx, train_batch in enumerate(train_loader):
+<<<<<<< HEAD
+            inputs, labels = train_batch
+            inputs = inputs.to(device)
+>>>>>>> c1eb4f8... add baselinev2
+=======
+            inputs, labels,_ = train_batch
+            inputs = inputs['image'].to(device)
+>>>>>>> 1d55337... + _, image
+>>>>>>> d3493d5... + _, image
             labels = labels.to(device)
 
             optimizer.zero_grad()
