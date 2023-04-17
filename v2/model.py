@@ -17,6 +17,7 @@ import timm
 >>>>>>> c1eb4f8... add baselinev2
 =======
 import torchvision.models as models
+import timm
 
 classification_models = models.list_models(module=models)
 >>>>>>> 5f29eb0... feat: implement resnet18 model
@@ -184,7 +185,6 @@ class MultiOutputModel(nn.Module):
 class EfficientBase(nn.Module):
     def __init__(self, num_classes=18):
         super().__init__()
-        import timm
         self.backbone = timm.create_model('efficientnet_b0', pretrained=True, num_classes=num_classes)
 
     def forward(self, x):
@@ -219,6 +219,28 @@ class EfficientNetB1(nn.Module):
         super().__init__()
 
         self.net = models.get_model('EfficientNet_B1', weights='DEFAULT')
+
+    def forward(self, x):
+        out = self.net(x)
+
+        return out
+
+class EfficientNetB2(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        self.net = models.get_model('EfficientNet_B2', weights='DEFAULT')
+
+    def forward(self, x):
+        out = self.net(x)
+
+        return out
+
+class ViTTiny_Patch16_384(nn.Module):
+    def __init__(self, num_classes=18):
+        super().__init__()
+
+        self.net = timm.create_model('vit_tiny_patch16_384', pretrained=True, num_classes=num_classes)
 
     def forward(self, x):
         out = self.net(x)
