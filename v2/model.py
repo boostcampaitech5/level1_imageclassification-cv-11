@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 <<<<<<< HEAD
+<<<<<<< HEAD
 import timm
 <<<<<<< HEAD
 =======
@@ -9,6 +10,11 @@ import timm
 =======
 
 >>>>>>> c1eb4f8... add baselinev2
+=======
+import torchvision.models as models
+
+classification_models = models.list_models(module=models)
+>>>>>>> 5f29eb0... feat: implement resnet18 model
 
 class BaseModel(nn.Module):
     def __init__(self, num_classes):
@@ -187,6 +193,17 @@ class EfficientBase(nn.Module):
        
         return out
     
+class ResNet18(nn.Module):
+    def __init__(self, num_classes=18):
+        super().__init__()
+        
+        self.net = models.get_model('ResNet18', weights='DEFAULT')
+
+    def forward(self, x):
+        out = self.net(x)
+       
+        return out
+    
 # class MultiLabelModel(nn.module):
 #     def __init__(self):
 #         super().__init__()
@@ -217,6 +234,7 @@ class EfficientBase(nn.Module):
 #         out_age_num = self.branch_age_val(out)
         
 <<<<<<< HEAD
+<<<<<<< HEAD
 #         return out_mask, out_gender, out_age_class, out_age_num
 =======
         return out_mask, out_gender, out_age_class, out_age_num
@@ -227,3 +245,6 @@ class EfficientBase(nn.Module):
 =======
 #         return out_mask, out_gender, out_age_class, out_age_num
 >>>>>>> 686cc95... add efficientent model
+=======
+#         return out_mask, out_gender, out_age_class, out_age_num
+>>>>>>> 5f29eb0... feat: implement resnet18 model
