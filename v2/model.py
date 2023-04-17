@@ -335,10 +335,10 @@ class MultiOutputModel(nn.Module):
 class EfficientBase(nn.Module):
     def __init__(self, num_classes=18):
         super().__init__()
-        self.backbone = timm.create_model('efficientnet_b0', pretrained=True, num_classes=num_classes)
+        self.net = timm.create_model('efficientnet_b0', pretrained=True, num_classes=num_classes)
 
     def forward(self, x):
-        out = self.backbone(x)
+        out = self.net(x)
        
         return out
     
