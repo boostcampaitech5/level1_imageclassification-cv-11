@@ -441,6 +441,7 @@ def train(data_dir, model_dir, args):
                 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> afa9e79... complit v1
@@ -464,6 +465,8 @@ def train(data_dir, model_dir, args):
 =======
 >>>>>>> 4df016b... complit v1
 >>>>>>> afa9e79... complit v1
+=======
+>>>>>>> 4df016b... complit v1
                 outs = model(inputs)
                 preds = torch.argmax(outs, dim=-1)
 
@@ -492,6 +495,7 @@ def train(data_dir, model_dir, args):
                     )
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -534,6 +538,9 @@ def train(data_dir, model_dir, args):
 =======
             val_acc = np.sum(val_acc_items) / len(val_set)
 >>>>>>> d606e02... fix: too may values to unpack for validation dataset
+=======
+            val_acc = np.sum(val_acc_items) / len(val_sets)
+>>>>>>> 4df016b... complit v1
             best_val_loss = min(best_val_loss, val_loss)
             if val_acc > best_val_acc:
                 print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
@@ -561,6 +568,7 @@ if __name__ == '__main__':
     parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
 <<<<<<< HEAD
+<<<<<<< HEAD
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
     parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
@@ -572,6 +580,9 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
 =======
     parser.add_argument('--valid_batch_size', type=int, default=1000, help='input batch size for validing (default: 1000)')
+=======
+    parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
+>>>>>>> 4df016b... complit v1
 =======
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
 >>>>>>> 4df016b... complit v1
