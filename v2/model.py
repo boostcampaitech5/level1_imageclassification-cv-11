@@ -8,10 +8,17 @@ import torch.nn.functional as F
 >>>>>>> 94d1ac2... feat: implement resnet18 model
 =======
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 5798f29... refactor: delete unused package torchvision
+=======
+<<<<<<< HEAD
+>>>>>>> 7bdb440... add multioutput model
 import timm
 <<<<<<< HEAD
 =======
+=======
+import timm
+>>>>>>> c7e2be0... add multioutput model
 
 >>>>>>> c7e2be0... add multioutput model
 <<<<<<< HEAD
@@ -200,6 +207,7 @@ class EfficientBase(nn.Module):
        
         return out
     
+<<<<<<< HEAD
 class ResNet18(nn.Module):
     def __init__(self, num_classes=18):
         super().__init__()
@@ -282,8 +290,34 @@ class ViTSmall_Patch16_384(nn.Module):
 #         2. 나만의 모델 아키텍쳐를 디자인 해봅니다.
 #         3. 모델의 output_dimension 은 num_classes 로 설정해주세요.
 #         """
+=======
+class MultiOutputModel(nn.Module):
+    def __init__(self, num_classes):        ## no num_classes in multi-output model
+        super().__init__()
+        self.backbone = timm.create_model('efficientnet_b0', pretrained=True, num_classes=1000)
+        self.branch_mask = nn.Linear(in_features=1000, out_features=3)
+        self.branch_gender = nn.Linear(in_features=1000, out_features=2)
+        self.branch_age_class = nn.Linear(in_features=1000, out_features=3)
+        self.branch_age_val = nn.Linear(in_features=1000, out_features=1)
+        """
+        1. 위와 같이 생성자의 parameter 에 num_claases 를 포함해주세요.
+        2. 나만의 모델 아키텍쳐를 디자인 해봅니다.
+        3. 모델의 output_dimension 은 num_classes 로 설정해주세요.
+        """
+>>>>>>> c7e2be0... add multioutput model
 
+    def forward(self, x):
+        """
+        1. 위에서 정의한 모델 아키텍쳐를 forward propagation 을 진행해주세요
+        2. 결과로 나온 output 을 return 해주세요
+        """
+        out = self.backbone(x)
+        out_mask = self.branch_mask(out)
+        out_gender = self.branch_gender(out)
+        out_age_class = self.branch_age_class(out)
+        out_age_num = self.branch_age_val(out)
         
+<<<<<<< HEAD
 >>>>>>> 686cc95... add efficientent model
 #     def forward(self, x):
 #          """
@@ -316,4 +350,10 @@ class ViTSmall_Patch16_384(nn.Module):
 =======
 #         return out_mask, out_gender, out_age_class, out_age_num
 >>>>>>> 5f29eb0... feat: implement resnet18 model
+<<<<<<< HEAD
 >>>>>>> 94d1ac2... feat: implement resnet18 model
+=======
+=======
+        return out_mask, out_gender, out_age_class, out_age_num
+>>>>>>> c7e2be0... add multioutput model
+>>>>>>> 7bdb440... add multioutput model
