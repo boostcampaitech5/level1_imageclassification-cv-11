@@ -22,9 +22,13 @@ from torch.utils.tensorboard import SummaryWriter
 from dataset import MaskBaseDataset
 from loss import create_criterion
 <<<<<<< HEAD
+<<<<<<< HEAD
 import augmentation
 =======
 >>>>>>> c1eb4f8... add baselinev2
+=======
+import augmentation
+>>>>>>> b41054b... split
 
 
 def seed_everything(seed):
@@ -41,13 +45,19 @@ def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b41054b... split
     
 def get_k(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['fold']
+<<<<<<< HEAD
 =======
 
 >>>>>>> c1eb4f8... add baselinev2
+=======
+>>>>>>> b41054b... split
 
 def grid_image(np_images, gts, preds, n=16, shuffle=False):
     batch_size = np_images.shape[0]
@@ -112,6 +122,9 @@ def train(data_dir, model_dir, args):
         data_dir=data_dir,
     )
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b41054b... split
     
     mean, std = (0.56019265, 0.52410305, 0.50145299), (0.23308824, 0.24294489, 0.2456003)
     
@@ -127,6 +140,7 @@ def train(data_dir, model_dir, args):
         std=std,
     )
     
+<<<<<<< HEAD
     num_classes = dataset.num_classes  # 18
 
     # -- augmentation
@@ -170,53 +184,71 @@ def train(data_dir, model_dir, args):
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
     model = model_module().to(device)
 =======
+=======
+>>>>>>> b41054b... split
     num_classes = dataset.num_classes  # 18
 
     # -- augmentation
-    transform_module = getattr(import_module("dataset"), args.augmentation)  # default: BaseAugmentation
-    transform = transform_module(
-        resize=args.resize,
-        mean=dataset.mean,
-        std=dataset.std,
-    )
-    dataset.set_transform(transform)
+    transform = augmentation.get_transforms()  # default: BaseAugmentation
+
+    train_dataset.set_transform(transform['train'])
+    val_dataset.set_transform(transform['val'])
+    
 
     # -- data_loader
-    train_set, val_set = dataset.split_dataset()
+    train_sets, _ = train_dataset.split_dataset(train_dataset)
+    _ , val_sets = val_dataset.split_dataset(val_dataset)
+    
+    def fold(k):
+        train_loader = DataLoader(
+            train_sets[k],
+            batch_size=args.batch_size,
+            num_workers=multiprocessing.cpu_count() // 2,
+            shuffle=True,
+            pin_memory=use_cuda,
+            drop_last=True,
+        )
 
-    train_loader = DataLoader(
-        train_set,
-        batch_size=args.batch_size,
-        num_workers=multiprocessing.cpu_count() // 2,
-        shuffle=True,
-        pin_memory=use_cuda,
-        drop_last=True,
-    )
-
-    val_loader = DataLoader(
-        val_set,
-        batch_size=args.valid_batch_size,
-        num_workers=multiprocessing.cpu_count() // 2,
-        shuffle=False,
-        pin_memory=use_cuda,
-        drop_last=True,
-    )
+        val_loader = DataLoader(
+            val_sets[k],
+            batch_size=args.valid_batch_size,
+            num_workers=multiprocessing.cpu_count() // 2,
+            shuffle=False,
+            pin_memory=use_cuda,
+            drop_last=True,
+        )
+        return train_loader, val_loader
 
     # -- model
+<<<<<<< HEAD
     model_module = getattr(import_module("model"), args.model)  # default: BaseModel
     model = model_module(
         num_classes=num_classes
     ).to(device)
 >>>>>>> c1eb4f8... add baselinev2
+=======
+    model_module = getattr(import_module("model"), args.model)
+    opt_module = getattr(import_module("torch.optim"), args.optimizer)
+    
+    i = 0
+    train_loader, val_loader = fold(i)
+    
+    # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
+    model = model_module(num_classes=num_classes).to(device)
+>>>>>>> b41054b... split
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
     criterion = create_criterion(args.criterion)  # default: cross_entropy
 <<<<<<< HEAD
+<<<<<<< HEAD
     # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
 =======
     opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
 >>>>>>> c1eb4f8... add baselinev2
+=======
+    # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
+>>>>>>> b41054b... split
     optimizer = opt_module(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=args.lr,
@@ -360,11 +392,15 @@ if __name__ == '__main__':
     parser.add_argument('--log_interval', type=int, default=20, help='how many batches to wait before logging training status')
     parser.add_argument('--name', default='exp', help='model save at {SM_MODEL_DIR}/{name}')
 <<<<<<< HEAD
+<<<<<<< HEAD
     parser.add_argument('--fold', default=1, help = 'kfold')
     parser.add_argument('--use_age', type=float, default=0, help='weight of mseloss(age) (default: 0)')
 =======
 
 >>>>>>> c1eb4f8... add baselinev2
+=======
+    parser.add_argument('--fold', default=1, help = 'kfold')
+>>>>>>> b41054b... split
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))

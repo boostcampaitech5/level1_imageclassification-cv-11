@@ -4,10 +4,14 @@ from collections import defaultdict
 from enum import Enum
 from typing import Tuple, List
 <<<<<<< HEAD
+<<<<<<< HEAD
 from sklearn.model_selection import StratifiedKFold
 =======
 
 >>>>>>> c1eb4f8... add baselinev2
+=======
+from sklearn.model_selection import StratifiedKFold
+>>>>>>> b41054b... split
 import numpy as np
 import torch
 from PIL import Image
@@ -140,6 +144,7 @@ class MaskBaseDataset(Dataset):
     mask_labels = []
     gender_labels = []
     age_labels = []
+    multi_class_label = []
 
     def __init__(self, data_dir, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
         self.data_dir = data_dir
@@ -178,6 +183,7 @@ class MaskBaseDataset(Dataset):
                 self.mask_labels.append(mask_label)
                 self.gender_labels.append(gender_label)
                 self.age_labels.append(age_label)
+                self.multi_class_label.append(mask_label * 6 + gender_label * 3 + age_label)
 
     def calc_statistics(self):
         has_statistics = self.mean is not None and self.std is not None
@@ -203,7 +209,7 @@ class MaskBaseDataset(Dataset):
         mask_label = self.get_mask_label(index)
         gender_label = self.get_gender_label(index)
         age_label = self.get_age_label(index)
-        multi_class_label = self.encode_multi_class(mask_label, gender_label, age_label)
+        multi_class_label = self.multi_class_label[index]
 
 <<<<<<< HEAD
         image_transform = self.transform(image=image)
@@ -235,8 +241,12 @@ class MaskBaseDataset(Dataset):
 =======
     def read_image(self, index):
         image_path = self.image_paths[index]
+<<<<<<< HEAD
         return Image.open(image_path)
 >>>>>>> c1eb4f8... add baselinev2
+=======
+        return np.array(Image.open(image_path))
+>>>>>>> b41054b... split
 
     @staticmethod
     def encode_multi_class(mask_label, gender_label, age_label) -> int:
@@ -259,6 +269,9 @@ class MaskBaseDataset(Dataset):
         return img_cp
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b41054b... split
     def split_dataset(self, dataset, k = 5) -> Tuple[Subset, Subset]:
         train_datasets = []
         val_datasets=[]
@@ -266,9 +279,12 @@ class MaskBaseDataset(Dataset):
         for train_indices, val_indices in skf.split(dataset, np.array(dataset.multi_class_label)%6):
             train_datasets.append(torch.utils.data.Subset(dataset, train_indices))
             val_datasets.append(torch.utils.data.Subset(dataset, val_indices))
+<<<<<<< HEAD
 =======
     def split_dataset(self) -> Tuple[Subset, Subset]:
 >>>>>>> c1eb4f8... add baselinev2
+=======
+>>>>>>> b41054b... split
         """
         데이터셋을 train 과 val 로 나눕니다,
         pytorch 내부의 torch.utils.data.random_split 함수를 사용하여
@@ -276,16 +292,22 @@ class MaskBaseDataset(Dataset):
         구현이 어렵지 않으니 구글링 혹은 IDE (e.g. pycharm) 의 navigation 기능을 통해 코드를 한 번 읽어보는 것을 추천드립니다^^
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b41054b... split
         #n_val = int(len(self) * self.val_ratio)
         #n_train = len(self) - n_val
         #train_set, val_set = random_split(self, [n_train, n_val])
         return train_datasets, val_datasets
+<<<<<<< HEAD
 =======
         n_val = int(len(self) * self.val_ratio)
         n_train = len(self) - n_val
         train_set, val_set = random_split(self, [n_train, n_val])
         return train_set, val_set
 >>>>>>> c1eb4f8... add baselinev2
+=======
+>>>>>>> b41054b... split
 
 
 class MaskSplitByProfileDataset(MaskBaseDataset):
