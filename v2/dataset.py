@@ -296,6 +296,7 @@ class MaskBaseDataset(Dataset):
 =======
         multi_class_label = self.multi_class_label[index]
 
+<<<<<<< HEAD
 >>>>>>> b41054b... split
         image_transform = self.transform(image)
 <<<<<<< HEAD
@@ -310,6 +311,9 @@ class MaskBaseDataset(Dataset):
 >>>>>>> 3f8af03... add continuous age
 >>>>>>> 0e9682b... add continuous age
 =======
+=======
+        image_transform = self.transform(image=image)
+>>>>>>> 686cc95... add efficientent model
         return image_transform, multi_class_label, age_num_label
 >>>>>>> 3f8af03... add continuous age
 
