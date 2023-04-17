@@ -48,7 +48,7 @@ class EfficientBase(nn.Module):
         return out
     
 class ResNet18(nn.Module):
-    def __init__(self, num_classes=18):
+    def __init__(self):
         super().__init__()
         
         self.net = models.get_model('ResNet18', weights='DEFAULT')
@@ -59,7 +59,7 @@ class ResNet18(nn.Module):
         return out
 
 class ResNet34(nn.Module):
-    def __init__(self, num_classes=18):
+    def __init__(self):
         super().__init__()
 
         self.net = models.get_model('ResNet34', weights='DEFAULT')
