@@ -195,7 +195,7 @@ class MaskBaseDataset(Dataset):
         age_label = self.get_age_label(index)
         multi_class_label = self.encode_multi_class(mask_label, gender_label, age_label)
 
-        image_transform = self.transform(image)
+        image_transform = self.transform(image=image)
         return image_transform, multi_class_label, age_num_label
 
     def __len__(self):
