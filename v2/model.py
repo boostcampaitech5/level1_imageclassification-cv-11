@@ -248,6 +248,17 @@ class ViTTiny_Patch16_384(nn.Module):
 
         return out
 
+class ViTSmall_Patch16_384(nn.Module):
+    def __init__(self, num_classes=18):
+        super().__init__()
+
+        self.net = timm.create_model('vit_small_patch16_384', pretrained=True, num_classes=num_classes)
+
+    def forward(self, x):
+        out = self.net(x)
+
+        return out
+
 # class MultiLabelModel(nn.module):
 #     def __init__(self):
 #         super().__init__()
