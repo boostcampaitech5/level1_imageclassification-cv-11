@@ -179,9 +179,8 @@ class MyModel(nn.Module):
 class EfficientBase(nn.Module):
     def __init__(self, num_classes=18):
         super().__init__()
-        from torchvision.models import efficientnet_b0
-        self.backbone = efficientnet_b0(pretrained=True)
-        self.backbone.classifier[1]= nn.Linear(1000,num_classes)
+        import timm
+        self.backbone = timm.create_model('efficientnet_b0', pretrained=True, num_classes=num_classes)
 
     def forward(self, x):
         out = self.backbone(x)
