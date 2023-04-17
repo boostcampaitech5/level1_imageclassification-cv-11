@@ -132,7 +132,7 @@ def train(data_dir, model_dir, args):
         train_loader = DataLoader(
             train_sets[k],
             batch_size=args.batch_size,
-            num_workers=multiprocessing.cpu_count() // 2,
+            num_workers=multiprocessing.cpu_count() // 3,
             shuffle=True,
             pin_memory=use_cuda,
             drop_last=True,
@@ -141,7 +141,7 @@ def train(data_dir, model_dir, args):
         val_loader = DataLoader(
             val_sets[k],
             batch_size=args.valid_batch_size,
-            num_workers=multiprocessing.cpu_count() // 2,
+            num_workers=multiprocessing.cpu_count() // 3,
             shuffle=False,
             pin_memory=use_cuda,
             drop_last=True,
@@ -182,7 +182,7 @@ def train(data_dir, model_dir, args):
         loss_value = 0
         matches = 0
         for idx, train_batch in enumerate(train_loader):
-            inputs, labels,_ = train_batch
+            inputs, labels, _ = train_batch
             inputs = inputs['image'].to(device)
             labels = labels.to(device)
 
@@ -221,8 +221,8 @@ def train(data_dir, model_dir, args):
             val_acc_items = []
             figure = None
             for val_batch in val_loader:
-                inputs, labels = val_batch
-                inputs = inputs.to(device)
+                inputs, labels, _ = val_batch
+                inputs = inputs['image'].to(device)
                 labels = labels.to(device)
 
                 outs = model(inputs)
@@ -241,7 +241,7 @@ def train(data_dir, model_dir, args):
                     )
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
-            val_acc = np.sum(val_acc_items) / len(val_sets)
+            val_acc = np.sum(val_acc_items) / len(val_set)
             best_val_loss = min(best_val_loss, val_loss)
             if val_acc > best_val_acc:
                 print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
