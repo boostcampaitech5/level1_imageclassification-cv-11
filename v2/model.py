@@ -202,6 +202,17 @@ class ResNet18(nn.Module):
         out = self.net(x)
        
         return out
+
+class ResNet34(nn.Module):
+    def __init__(self, num_classes=18):
+        super().__init__()
+
+        self.net = models.get_model('ResNet34', weights='DEFAULT')
+
+    def forward(self, x):
+        out = self.net(x)
+
+        return out
     
 # class MultiLabelModel(nn.module):
 #     def __init__(self):
