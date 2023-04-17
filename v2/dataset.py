@@ -249,6 +249,11 @@ class MaskBaseDataset(Dataset):
         multi_class_label = self.encode_multi_class(mask_label, gender_label, age_label)
 >>>>>>> 3f8af03... add continuous age
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> b014c65... add efficientent model
         image_transform = self.transform(image=image)
         return image_transform, multi_class_label, age_num_label
 <<<<<<< HEAD
@@ -259,6 +264,9 @@ class MaskBaseDataset(Dataset):
         return image_transform, multi_class_label
 >>>>>>> c1eb4f8... add baselinev2
 =======
+=======
+        image_transform = self.transform(image=image)
+>>>>>>> 686cc95... add efficientent model
         return image_transform, multi_class_label, age_num_label
 >>>>>>> 3f8af03... add continuous age
 >>>>>>> 0e9682b... add continuous age
