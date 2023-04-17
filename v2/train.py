@@ -544,18 +544,35 @@ if __name__ == '__main__':
 <<<<<<< HEAD
     parser.add_argument('--fold', default=1, help = 'kfold')
     parser.add_argument('--use_age', type=float, default=0, help='weight of mseloss(age) (default: 0)')
+<<<<<<< HEAD
 =======
 
 >>>>>>> c1eb4f8... add baselinev2
 =======
     parser.add_argument('--fold', default=1, help = 'kfold')
 >>>>>>> b41054b... split
+<<<<<<< HEAD
 >>>>>>> 9c1f8f7... split
+=======
+=======
+>>>>>>> 2f8c9a2... add argument 'use_age'
+>>>>>>> ac289b7... add argument 'use_age'
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))
 
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+=======
+>>>>>>> c1eb4f8... add baselinev2
+=======
+
+>>>>>>> 2f8c9a2... add argument 'use_age'
+>>>>>>> ac289b7... add argument 'use_age'
     args = parser.parse_args()
     print(args)
 
