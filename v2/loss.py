@@ -69,6 +69,7 @@ class F1Loss(nn.Module):
 _criterion_entrypoints = {
     'cross_entropy': nn.CrossEntropyLoss,
 <<<<<<< HEAD
+<<<<<<< HEAD
     'mse' : nn.MSELoss,
 =======
 <<<<<<< HEAD
@@ -80,6 +81,9 @@ _criterion_entrypoints = {
     'mse' : nn.MSELoss,
 >>>>>>> a66cf9d... add mse loss
 >>>>>>> 7d6b614... add mse loss
+=======
+    'mse' : nn.MSELoss,
+>>>>>>> a66cf9d... add mse loss
     'focal': FocalLoss,
     'label_smoothing': LabelSmoothingLoss,
     'f1': F1Loss
