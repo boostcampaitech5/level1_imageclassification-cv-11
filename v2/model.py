@@ -48,10 +48,10 @@ class EfficientBase(nn.Module):
         return out
     
 class ResNet18(nn.Module):
-    def __init__(self):
+    def __init__(self, num_classes=18):
         super().__init__()
         
-        self.net = models.get_model('ResNet18', weights='DEFAULT')
+        self.net = timm.create_model('resnet18', pretrained=True, num_classes=num_classes)
 
     def forward(self, x):
         out = self.net(x)
@@ -59,10 +59,10 @@ class ResNet18(nn.Module):
         return out
 
 class ResNet34(nn.Module):
-    def __init__(self):
+    def __init__(self, num_classes=18):
         super().__init__()
 
-        self.net = models.get_model('ResNet34', weights='DEFAULT')
+        self.net = timm.create_model('resnet34', pretrained=True, num_classes=num_classes)
 
     def forward(self, x):
         out = self.net(x)
@@ -70,10 +70,10 @@ class ResNet34(nn.Module):
         return out
 
 class EfficientNetB1(nn.Module):
-    def __init__(self):
+    def __init__(self, num_classes=18):
         super().__init__()
 
-        self.net = models.get_model('EfficientNet_B1', weights='DEFAULT')
+        self.net = timm.create_model('efficientnet_b1', pretrained=True, num_classes=num_classes)
 
     def forward(self, x):
         out = self.net(x)
@@ -81,10 +81,10 @@ class EfficientNetB1(nn.Module):
         return out
 
 class EfficientNetB2(nn.Module):
-    def __init__(self):
+    def __init__(self, num_classes=18):
         super().__init__()
 
-        self.net = models.get_model('EfficientNet_B2', weights='DEFAULT')
+        self.net = timm.create_model('efficientnet_b2', pretrained=True, num_classes=num_classes)
 
     def forward(self, x):
         out = self.net(x)
