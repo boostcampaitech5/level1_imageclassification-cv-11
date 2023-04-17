@@ -1,9 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision.models as models
 import timm
-
-classification_models = models.list_models(module=models)
 
 class BaseModel(nn.Module):
     def __init__(self, num_classes):
