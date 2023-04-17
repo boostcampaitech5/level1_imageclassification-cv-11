@@ -186,6 +186,7 @@ def train(data_dir, model_dir, args):
     train_loader, val_loader = fold(i)
     
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
+<<<<<<< HEAD
     model = model_module().to(device)
 =======
 =======
@@ -240,6 +241,12 @@ def train(data_dir, model_dir, args):
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
     model = model_module(num_classes=num_classes).to(device)
 >>>>>>> b41054b... split
+=======
+    if ('EfficientBase' == args.model):
+        model = model_module(num_classes=num_classes).to(device)
+    else:
+        model = model_module().to(device)
+>>>>>>> 7e1cbeb... fix: allow different model parameters depending on model type
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
