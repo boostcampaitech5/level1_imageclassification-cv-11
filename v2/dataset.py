@@ -390,20 +390,30 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
                     gender_label = GenderLabels.from_str(gender)
                     age_label = AgeLabels.from_number(age)
 <<<<<<< HEAD
+<<<<<<< HEAD
                     age_num_label = AgeNumLabels.from_number(age)
 
 =======
 >>>>>>> c1eb4f8... add baselinev2
+=======
+                    age_num_label = AgeNumLabels.from_number(age)
+
+>>>>>>> 62fc517... add continuous age
 
                     self.image_paths.append(img_path)
                     self.mask_labels.append(mask_label)
                     self.gender_labels.append(gender_label)
                     self.age_labels.append(age_label)
 <<<<<<< HEAD
+<<<<<<< HEAD
                     self.age_num_labels.append(age_num_label)
 
 =======
 >>>>>>> c1eb4f8... add baselinev2
+=======
+                    self.age_num_labels.append(age_num_label)
+
+>>>>>>> 62fc517... add continuous age
 
                     self.indices[phase].append(cnt)
                     cnt += 1
