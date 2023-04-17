@@ -4,7 +4,11 @@ import torch.nn.functional as F
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 94d1ac2... feat: implement resnet18 model
+=======
+<<<<<<< HEAD
+>>>>>>> 5798f29... refactor: delete unused package torchvision
 import timm
 <<<<<<< HEAD
 =======
@@ -23,6 +27,10 @@ classification_models = models.list_models(module=models)
 >>>>>>> 5f29eb0... feat: implement resnet18 model
 >>>>>>> 94d1ac2... feat: implement resnet18 model
 
+=======
+import timm
+
+>>>>>>> 11047eb... refactor: delete unused package torchvision
 class BaseModel(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
