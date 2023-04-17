@@ -295,6 +295,7 @@ def train(data_dir, model_dir, args):
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     model = model_module(num_classes=num_classes).to(device)
 <<<<<<< HEAD
 >>>>>>> b41054b... split
@@ -334,6 +335,9 @@ def train(data_dir, model_dir, args):
     else:
         model = model_module().to(device)
 >>>>>>> 7e1cbeb... fix: allow different model parameters depending on model type
+=======
+    model = model_module().to(device)
+>>>>>>> 1734296... refactor: change model implementation to timm
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
