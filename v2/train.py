@@ -228,6 +228,7 @@ def train(data_dir, model_dir, args):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     model = model_module().to(device)
 <<<<<<< HEAD
 =======
@@ -319,6 +320,12 @@ def train(data_dir, model_dir, args):
 >>>>>>> 2489d78... refactor: change model implementation to timm
 =======
 >>>>>>> b41054b... split
+=======
+    if ('EfficientBase' == args.model):
+        model = model_module(num_classes=num_classes).to(device)
+    else:
+        model = model_module().to(device)
+>>>>>>> 7e1cbeb... fix: allow different model parameters depending on model type
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
