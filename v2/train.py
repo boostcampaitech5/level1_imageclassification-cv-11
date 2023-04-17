@@ -156,7 +156,7 @@ def train(data_dir, model_dir, args):
     train_loader, val_loader = fold(i)
     
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-    if ('EfficientBase' == args.model or 'ViTTiny_Patch16_384' == args.model):
+    if ('EfficientBase' == args.model or 'ViTTiny_Patch16_384' == args.model or 'ViTSmall_Patch16_384' == args.model):
         model = model_module(num_classes=num_classes).to(device)
     else:
         model = model_module().to(device)
