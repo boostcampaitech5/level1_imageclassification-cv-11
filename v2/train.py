@@ -495,9 +495,16 @@ if __name__ == '__main__':
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
 >>>>>>> 4df016b... complit v1
     parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
+<<<<<<< HEAD
     parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer type (default: SGD)')
 >>>>>>> c1eb4f8... add baselinev2
+<<<<<<< HEAD
 >>>>>>> afa9e79... complit v1
+=======
+=======
+    parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
+>>>>>>> 312978e... default : Adam
+>>>>>>> ef8900b... default : Adam
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
