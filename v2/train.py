@@ -7,48 +7,15 @@ import random
 import re
 from importlib import import_module
 from pathlib import Path
-<<<<<<< HEAD
-<<<<<<< HEAD
 from tqdm import tqdm
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-from tqdm import tqdm
-=======
-
->>>>>>> c1eb4f8... add baselinev2
-=======
-from tqdm import tqdm
->>>>>>> 408d182... fix val_acc
->>>>>>> ef64d35... fix val_acc
-=======
-from tqdm import tqdm
->>>>>>> 408d182... fix val_acc
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
-
 from dataset import MaskBaseDataset
 from loss import create_criterion
-<<<<<<< HEAD
-<<<<<<< HEAD
 import augmentation
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-import augmentation
-=======
->>>>>>> c1eb4f8... add baselinev2
-=======
-import augmentation
->>>>>>> b41054b... split
->>>>>>> 9c1f8f7... split
-=======
-import augmentation
->>>>>>> b41054b... split
 
 
 def seed_everything(seed):
@@ -64,32 +31,10 @@ def seed_everything(seed):
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b41054b... split
->>>>>>> 9c1f8f7... split
-=======
->>>>>>> b41054b... split
     
 def get_k(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['fold']
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-
->>>>>>> c1eb4f8... add baselinev2
-=======
->>>>>>> b41054b... split
->>>>>>> 9c1f8f7... split
-=======
->>>>>>> b41054b... split
 
 def grid_image(np_images, gts, preds, n=16, shuffle=False):
     batch_size = np_images.shape[0]
@@ -153,16 +98,6 @@ def train(data_dir, model_dir, args):
     dataset = dataset_module(
         data_dir=data_dir,
     )
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b41054b... split
->>>>>>> 9c1f8f7... split
-=======
->>>>>>> b41054b... split
     
     mean, std = (0.56019265, 0.52410305, 0.50145299), (0.23308824, 0.24294489, 0.2456003)
     
@@ -178,15 +113,10 @@ def train(data_dir, model_dir, args):
         std=std,
     )
     
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b41054b... split
     num_classes = dataset.num_classes  # 18
 
     # -- augmentation
     transform = augmentation.get_transforms()  # default: BaseAugmentation
-<<<<<<< HEAD
 
     train_dataset.set_transform(transform['train'])
     val_dataset.set_transform(transform['val'])
@@ -224,141 +154,12 @@ def train(data_dir, model_dir, args):
     train_loader, val_loader = fold(i)
     
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    model = model_module().to(device)
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> b41054b... split
-    num_classes = dataset.num_classes  # 18
-
-    # -- augmentation
-    transform = augmentation.get_transforms()  # default: BaseAugmentation
-
-    train_dataset.set_transform(transform['train'])
-    val_dataset.set_transform(transform['val'])
-    
-
-=======
-
-    train_dataset.set_transform(transform['train'])
-    val_dataset.set_transform(transform['val'])
-    
-
->>>>>>> b41054b... split
-    # -- data_loader
-    train_sets, _ = train_dataset.split_dataset(train_dataset)
-    _ , val_sets = val_dataset.split_dataset(val_dataset)
-    
-    def fold(k):
-        train_loader = DataLoader(
-            train_sets[k],
-            batch_size=args.batch_size,
-            num_workers=multiprocessing.cpu_count() // 2,
-            shuffle=True,
-            pin_memory=use_cuda,
-            drop_last=True,
-        )
-
-        val_loader = DataLoader(
-            val_sets[k],
-            batch_size=args.valid_batch_size,
-            num_workers=multiprocessing.cpu_count() // 2,
-            shuffle=False,
-            pin_memory=use_cuda,
-            drop_last=True,
-        )
-        return train_loader, val_loader
-
-    # -- model
-<<<<<<< HEAD
-<<<<<<< HEAD
-    model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-    model = model_module(
-        num_classes=num_classes
-    ).to(device)
->>>>>>> c1eb4f8... add baselinev2
-=======
-=======
->>>>>>> b41054b... split
-    model_module = getattr(import_module("model"), args.model)
-    opt_module = getattr(import_module("torch.optim"), args.optimizer)
-    
-    i = 0
-    train_loader, val_loader = fold(i)
-    
-    # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     model = model_module(num_classes=num_classes).to(device)
-<<<<<<< HEAD
->>>>>>> b41054b... split
-<<<<<<< HEAD
->>>>>>> 9c1f8f7... split
-=======
-=======
-    if ('EfficientBase' == args.model):
-=======
-    if ('EfficientBase' == args.model or 'ViTTiny_Patch16_384' == args.model):
->>>>>>> 526cac6... feat: implement vit_tiny_patch16_model
-=======
-    if ('EfficientBase' == args.model or 'ViTTiny_Patch16_384' == args.model or 'ViTSmall_Patch16_384' == args.model):
->>>>>>> 629e670... feat: implement vit_small_patch16_384 model
-        model = model_module(num_classes=num_classes).to(device)
-    else:
-        model = model_module().to(device)
->>>>>>> 7e1cbeb... fix: allow different model parameters depending on model type
-<<<<<<< HEAD
->>>>>>> 5d68c6d... fix: allow different model parameters depending on model type
-=======
-=======
-    model = model_module().to(device)
->>>>>>> 1734296... refactor: change model implementation to timm
->>>>>>> 2489d78... refactor: change model implementation to timm
-=======
->>>>>>> b41054b... split
-=======
-    if ('EfficientBase' == args.model):
-=======
-    if ('EfficientBase' == args.model or 'ViTTiny_Patch16_384' == args.model):
->>>>>>> 526cac6... feat: implement vit_tiny_patch16_model
-=======
-    if ('EfficientBase' == args.model or 'ViTTiny_Patch16_384' == args.model or 'ViTSmall_Patch16_384' == args.model):
->>>>>>> 629e670... feat: implement vit_small_patch16_384 model
-        model = model_module(num_classes=num_classes).to(device)
-    else:
-        model = model_module().to(device)
->>>>>>> 7e1cbeb... fix: allow different model parameters depending on model type
-=======
-    model = model_module().to(device)
->>>>>>> 1734296... refactor: change model implementation to timm
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
     criterion = create_criterion(args.criterion)  # default: cross_entropy
-<<<<<<< HEAD
-<<<<<<< HEAD
     # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-    # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
-=======
-    opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
->>>>>>> c1eb4f8... add baselinev2
-=======
-    # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
->>>>>>> b41054b... split
->>>>>>> 9c1f8f7... split
-=======
-    # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
->>>>>>> b41054b... split
     optimizer = opt_module(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=args.lr,
@@ -378,47 +179,9 @@ def train(data_dir, model_dir, args):
         model.train()
         loss_value = 0
         matches = 0
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> ef64d35... fix val_acc
         for idx, train_batch in tqdm(enumerate(train_loader)):
             inputs, labels, _ = train_batch
             inputs = inputs['image'].to(device)
-<<<<<<< HEAD
-=======
-=======
-        for idx, train_batch in enumerate(train_loader):
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            inputs, labels = train_batch
-            inputs = inputs.to(device)
->>>>>>> c1eb4f8... add baselinev2
-=======
-            inputs, labels,_ = train_batch
-=======
-=======
-        for idx, train_batch in tqdm(enumerate(train_loader)):
->>>>>>> 408d182... fix val_acc
-            inputs, labels, _ = train_batch
->>>>>>> d606e02... fix: too may values to unpack for validation dataset
-            inputs = inputs['image'].to(device)
->>>>>>> 1d55337... + _, image
->>>>>>> d3493d5... + _, image
-=======
-            inputs, labels,_ = train_batch
-=======
-=======
-        for idx, train_batch in tqdm(enumerate(train_loader)):
->>>>>>> 408d182... fix val_acc
-            inputs, labels, _ = train_batch
->>>>>>> d606e02... fix: too may values to unpack for validation dataset
-            inputs = inputs['image'].to(device)
->>>>>>> 1d55337... + _, image
             labels = labels.to(device)
 
             optimizer.zero_grad()
@@ -456,67 +219,17 @@ def train(data_dir, model_dir, args):
             val_acc_items = []
             figure = None
             for val_batch in val_loader:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> e2bae17... fix: too may values to unpack for validation dataset
                 inputs, labels, _ = val_batch
                 inputs = inputs['image'].to(device)
                 labels = labels.to(device)
                 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> afa9e79... complit v1
-=======
-                inputs, labels = val_batch
-                inputs = inputs.to(device)
-=======
-                inputs, labels, _ = val_batch
-                inputs = inputs['image'].to(device)
->>>>>>> d606e02... fix: too may values to unpack for validation dataset
-=======
-                inputs, labels, _ = val_batch
-                inputs = inputs['image'].to(device)
->>>>>>> d606e02... fix: too may values to unpack for validation dataset
-                labels = labels.to(device)
-
->>>>>>> c1eb4f8... add baselinev2
-<<<<<<< HEAD
->>>>>>> e2bae17... fix: too may values to unpack for validation dataset
-=======
-=======
->>>>>>> 4df016b... complit v1
->>>>>>> afa9e79... complit v1
-=======
->>>>>>> 4df016b... complit v1
                 outs = model(inputs)
                 preds = torch.argmax(outs, dim=-1)
 
                 loss_item = criterion(outs, labels).item()
                 acc_item = (labels == preds).sum().item()
                 val_loss_items.append(loss_item)
-<<<<<<< HEAD
-<<<<<<< HEAD
                 val_acc_items.append(acc_item/val_loader.batch_size)
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-                val_acc_items.append(acc_item/val_loader.batch_size)
-=======
-                val_acc_items.append(acc_item)
->>>>>>> c1eb4f8... add baselinev2
-=======
-                val_acc_items.append(acc_item/val_loader.batch_size)
->>>>>>> 408d182... fix val_acc
->>>>>>> ef64d35... fix val_acc
-=======
-                val_acc_items.append(acc_item/val_loader.batch_size)
->>>>>>> 408d182... fix val_acc
 
                 if figure is None:
                     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
@@ -526,56 +239,7 @@ def train(data_dir, model_dir, args):
                     )
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
             val_acc = np.mean(val_acc_items)
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            val_acc = np.mean(val_acc_items)
-=======
-            val_acc = np.sum(val_acc_items) / len(val_set)
->>>>>>> c1eb4f8... add baselinev2
-=======
-            val_acc = np.sum(val_acc_items) / len(val_sets)
->>>>>>> 04c4854... add timm efficientbase
-<<<<<<< HEAD
->>>>>>> ebd1120... add timm efficientbase
-=======
-=======
-            val_acc = np.sum(val_acc_items) / len(val_set)
->>>>>>> d606e02... fix: too may values to unpack for validation dataset
-<<<<<<< HEAD
->>>>>>> e2bae17... fix: too may values to unpack for validation dataset
-=======
-=======
-            val_acc = np.sum(val_acc_items) / len(val_sets)
->>>>>>> 4df016b... complit v1
-<<<<<<< HEAD
->>>>>>> afa9e79... complit v1
-=======
-=======
-            val_acc = np.mean(val_acc_items)
->>>>>>> 408d182... fix val_acc
->>>>>>> ef64d35... fix val_acc
-=======
-            val_acc = np.sum(val_acc_items) / len(val_sets)
->>>>>>> 04c4854... add timm efficientbase
-=======
-            val_acc = np.sum(val_acc_items) / len(val_set)
->>>>>>> d606e02... fix: too may values to unpack for validation dataset
-=======
-            val_acc = np.sum(val_acc_items) / len(val_sets)
->>>>>>> 4df016b... complit v1
-=======
-            val_acc = np.mean(val_acc_items)
->>>>>>> 408d182... fix val_acc
             best_val_loss = min(best_val_loss, val_loss)
             if val_acc > best_val_acc:
                 print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
@@ -602,86 +266,22 @@ if __name__ == '__main__':
     parser.add_argument('--augmentation', type=str, default='BaseAugmentation', help='data augmentation type (default: BaseAugmentation)')
     parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
-<<<<<<< HEAD
-<<<<<<< HEAD
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
     parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-    parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
-    parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
-    parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
-<<<<<<< HEAD
-=======
-    parser.add_argument('--valid_batch_size', type=int, default=1000, help='input batch size for validing (default: 1000)')
-=======
-    parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
->>>>>>> 4df016b... complit v1
-=======
-    parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
->>>>>>> 4df016b... complit v1
-    parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
-<<<<<<< HEAD
-    parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer type (default: SGD)')
->>>>>>> c1eb4f8... add baselinev2
-<<<<<<< HEAD
->>>>>>> afa9e79... complit v1
-=======
-=======
-    parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
->>>>>>> 312978e... default : Adam
->>>>>>> ef8900b... default : Adam
-=======
->>>>>>> 312978e... default : Adam
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
     parser.add_argument('--lr_decay_step', type=int, default=20, help='learning rate scheduler deacy step (default: 20)')
     parser.add_argument('--log_interval', type=int, default=20, help='how many batches to wait before logging training status')
     parser.add_argument('--name', default='exp', help='model save at {SM_MODEL_DIR}/{name}')
-<<<<<<< HEAD
-<<<<<<< HEAD
     parser.add_argument('--fold', default=1, help = 'kfold')
     parser.add_argument('--use_age', type=float, default=0, help='weight of mseloss(age) (default: 0)')
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-    parser.add_argument('--fold', default=1, help = 'kfold')
-    parser.add_argument('--use_age', type=float, default=0, help='weight of mseloss(age) (default: 0)')
-<<<<<<< HEAD
-=======
-
->>>>>>> c1eb4f8... add baselinev2
-=======
-    parser.add_argument('--fold', default=1, help = 'kfold')
->>>>>>> b41054b... split
-<<<<<<< HEAD
->>>>>>> 9c1f8f7... split
-=======
-=======
->>>>>>> 2f8c9a2... add argument 'use_age'
->>>>>>> ac289b7... add argument 'use_age'
-=======
-    parser.add_argument('--fold', default=1, help = 'kfold')
->>>>>>> b41054b... split
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))
 
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
->>>>>>> c1eb4f8... add baselinev2
-=======
-
->>>>>>> 2f8c9a2... add argument 'use_age'
->>>>>>> ac289b7... add argument 'use_age'
     args = parser.parse_args()
     print(args)
 
