@@ -7,7 +7,11 @@ import random
 import re
 from importlib import import_module
 from pathlib import Path
+<<<<<<< HEAD
 from tqdm import tqdm
+=======
+
+>>>>>>> c1eb4f8... add baselinev2
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -17,7 +21,10 @@ from torch.utils.tensorboard import SummaryWriter
 
 from dataset import MaskBaseDataset
 from loss import create_criterion
+<<<<<<< HEAD
 import augmentation
+=======
+>>>>>>> c1eb4f8... add baselinev2
 
 
 def seed_everything(seed):
@@ -33,10 +40,14 @@ def seed_everything(seed):
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
+<<<<<<< HEAD
     
 def get_k(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['fold']
+=======
+
+>>>>>>> c1eb4f8... add baselinev2
 
 def grid_image(np_images, gts, preds, n=16, shuffle=False):
     batch_size = np_images.shape[0]
@@ -100,6 +111,7 @@ def train(data_dir, model_dir, args):
     dataset = dataset_module(
         data_dir=data_dir,
     )
+<<<<<<< HEAD
     
     mean, std = (0.56019265, 0.52410305, 0.50145299), (0.23308824, 0.24294489, 0.2456003)
     
@@ -157,11 +169,54 @@ def train(data_dir, model_dir, args):
     
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
     model = model_module().to(device)
+=======
+    num_classes = dataset.num_classes  # 18
+
+    # -- augmentation
+    transform_module = getattr(import_module("dataset"), args.augmentation)  # default: BaseAugmentation
+    transform = transform_module(
+        resize=args.resize,
+        mean=dataset.mean,
+        std=dataset.std,
+    )
+    dataset.set_transform(transform)
+
+    # -- data_loader
+    train_set, val_set = dataset.split_dataset()
+
+    train_loader = DataLoader(
+        train_set,
+        batch_size=args.batch_size,
+        num_workers=multiprocessing.cpu_count() // 2,
+        shuffle=True,
+        pin_memory=use_cuda,
+        drop_last=True,
+    )
+
+    val_loader = DataLoader(
+        val_set,
+        batch_size=args.valid_batch_size,
+        num_workers=multiprocessing.cpu_count() // 2,
+        shuffle=False,
+        pin_memory=use_cuda,
+        drop_last=True,
+    )
+
+    # -- model
+    model_module = getattr(import_module("model"), args.model)  # default: BaseModel
+    model = model_module(
+        num_classes=num_classes
+    ).to(device)
+>>>>>>> c1eb4f8... add baselinev2
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
     criterion = create_criterion(args.criterion)  # default: cross_entropy
+<<<<<<< HEAD
     # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
+=======
+    opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
+>>>>>>> c1eb4f8... add baselinev2
     optimizer = opt_module(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=args.lr,
@@ -181,9 +236,15 @@ def train(data_dir, model_dir, args):
         model.train()
         loss_value = 0
         matches = 0
+<<<<<<< HEAD
         for idx, train_batch in tqdm(enumerate(train_loader)):
             inputs, labels, _ = train_batch
             inputs = inputs['image'].to(device)
+=======
+        for idx, train_batch in enumerate(train_loader):
+            inputs, labels = train_batch
+            inputs = inputs.to(device)
+>>>>>>> c1eb4f8... add baselinev2
             labels = labels.to(device)
 
             optimizer.zero_grad()
@@ -221,17 +282,28 @@ def train(data_dir, model_dir, args):
             val_acc_items = []
             figure = None
             for val_batch in val_loader:
+<<<<<<< HEAD
                 inputs, labels, _ = val_batch
                 inputs = inputs['image'].to(device)
                 labels = labels.to(device)
                 
+=======
+                inputs, labels = val_batch
+                inputs = inputs.to(device)
+                labels = labels.to(device)
+
+>>>>>>> c1eb4f8... add baselinev2
                 outs = model(inputs)
                 preds = torch.argmax(outs, dim=-1)
 
                 loss_item = criterion(outs, labels).item()
                 acc_item = (labels == preds).sum().item()
                 val_loss_items.append(loss_item)
+<<<<<<< HEAD
                 val_acc_items.append(acc_item/val_loader.batch_size)
+=======
+                val_acc_items.append(acc_item)
+>>>>>>> c1eb4f8... add baselinev2
 
                 if figure is None:
                     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
@@ -241,7 +313,11 @@ def train(data_dir, model_dir, args):
                     )
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
+<<<<<<< HEAD
             val_acc = np.mean(val_acc_items)
+=======
+            val_acc = np.sum(val_acc_items) / len(val_set)
+>>>>>>> c1eb4f8... add baselinev2
             best_val_loss = min(best_val_loss, val_loss)
             if val_acc > best_val_acc:
                 print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
@@ -268,22 +344,35 @@ if __name__ == '__main__':
     parser.add_argument('--augmentation', type=str, default='BaseAugmentation', help='data augmentation type (default: BaseAugmentation)')
     parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
+<<<<<<< HEAD
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
     parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
+=======
+    parser.add_argument('--valid_batch_size', type=int, default=1000, help='input batch size for validing (default: 1000)')
+    parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
+    parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer type (default: SGD)')
+>>>>>>> c1eb4f8... add baselinev2
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
     parser.add_argument('--lr_decay_step', type=int, default=20, help='learning rate scheduler deacy step (default: 20)')
     parser.add_argument('--log_interval', type=int, default=20, help='how many batches to wait before logging training status')
     parser.add_argument('--name', default='exp', help='model save at {SM_MODEL_DIR}/{name}')
+<<<<<<< HEAD
     parser.add_argument('--fold', default=1, help = 'kfold')
     parser.add_argument('--use_age', type=float, default=0, help='weight of mseloss(age) (default: 0)')
+=======
+
+>>>>>>> c1eb4f8... add baselinev2
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c1eb4f8... add baselinev2
     args = parser.parse_args()
     print(args)
 

@@ -3,7 +3,11 @@ import random
 from collections import defaultdict
 from enum import Enum
 from typing import Tuple, List
+<<<<<<< HEAD
 from sklearn.model_selection import StratifiedKFold
+=======
+
+>>>>>>> c1eb4f8... add baselinev2
 import numpy as np
 import torch
 from PIL import Image
@@ -103,6 +107,7 @@ class AgeLabels(int, Enum):
             return cls.MIDDLE
         else:
             return cls.OLD
+<<<<<<< HEAD
          
 class AgeNumLabels(int, Enum):
 
@@ -114,6 +119,8 @@ class AgeNumLabels(int, Enum):
             raise ValueError(f"Age value should be numeric, {value}")
 
         return value
+=======
+>>>>>>> c1eb4f8... add baselinev2
 
 
 class MaskBaseDataset(Dataset):
@@ -162,7 +169,10 @@ class MaskBaseDataset(Dataset):
                 id, gender, race, age = profile.split("_")
                 gender_label = GenderLabels.from_str(gender)
                 age_label = AgeLabels.from_number(age)
+<<<<<<< HEAD
                 age_num_label = AgeNumLabels.from_number(age)
+=======
+>>>>>>> c1eb4f8... add baselinev2
 
                 self.image_paths.append(img_path)
                 self.mask_labels.append(mask_label)
@@ -195,8 +205,13 @@ class MaskBaseDataset(Dataset):
         age_label = self.get_age_label(index)
         multi_class_label = self.encode_multi_class(mask_label, gender_label, age_label)
 
+<<<<<<< HEAD
         image_transform = self.transform(image=image)
         return image_transform, multi_class_label, age_num_label
+=======
+        image_transform = self.transform(image)
+        return image_transform, multi_class_label
+>>>>>>> c1eb4f8... add baselinev2
 
     def __len__(self):
         return len(self.image_paths)
@@ -210,12 +225,18 @@ class MaskBaseDataset(Dataset):
     def get_age_label(self, index) -> AgeLabels:
         return self.age_labels[index]
 
+<<<<<<< HEAD
     def get_age_num_label(self,index) -> AgeNumLabels:
         return self.age_num_labels[index]
     
     def read_image(self, index):
         image_path = self.image_paths[index]
         return np.array(Image.open(image_path))
+=======
+    def read_image(self, index):
+        image_path = self.image_paths[index]
+        return Image.open(image_path)
+>>>>>>> c1eb4f8... add baselinev2
 
     @staticmethod
     def encode_multi_class(mask_label, gender_label, age_label) -> int:
@@ -237,6 +258,7 @@ class MaskBaseDataset(Dataset):
         img_cp = np.clip(img_cp, 0, 255).astype(np.uint8)
         return img_cp
 
+<<<<<<< HEAD
     def split_dataset(self, dataset, k = 5) -> Tuple[Subset, Subset]:
         train_datasets = []
         val_datasets=[]
@@ -244,16 +266,26 @@ class MaskBaseDataset(Dataset):
         for train_indices, val_indices in skf.split(dataset, np.array(dataset.multi_class_label)%6):
             train_datasets.append(torch.utils.data.Subset(dataset, train_indices))
             val_datasets.append(torch.utils.data.Subset(dataset, val_indices))
+=======
+    def split_dataset(self) -> Tuple[Subset, Subset]:
+>>>>>>> c1eb4f8... add baselinev2
         """
         데이터셋을 train 과 val 로 나눕니다,
         pytorch 내부의 torch.utils.data.random_split 함수를 사용하여
         torch.utils.data.Subset 클래스 둘로 나눕니다.
         구현이 어렵지 않으니 구글링 혹은 IDE (e.g. pycharm) 의 navigation 기능을 통해 코드를 한 번 읽어보는 것을 추천드립니다^^
         """
+<<<<<<< HEAD
         #n_val = int(len(self) * self.val_ratio)
         #n_train = len(self) - n_val
         #train_set, val_set = random_split(self, [n_train, n_val])
         return train_datasets, val_datasets
+=======
+        n_val = int(len(self) * self.val_ratio)
+        n_train = len(self) - n_val
+        train_set, val_set = random_split(self, [n_train, n_val])
+        return train_set, val_set
+>>>>>>> c1eb4f8... add baselinev2
 
 
 class MaskSplitByProfileDataset(MaskBaseDataset):
@@ -301,15 +333,21 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
                     id, gender, race, age = profile.split("_")
                     gender_label = GenderLabels.from_str(gender)
                     age_label = AgeLabels.from_number(age)
+<<<<<<< HEAD
                     age_num_label = AgeNumLabels.from_number(age)
 
+=======
+>>>>>>> c1eb4f8... add baselinev2
 
                     self.image_paths.append(img_path)
                     self.mask_labels.append(mask_label)
                     self.gender_labels.append(gender_label)
                     self.age_labels.append(age_label)
+<<<<<<< HEAD
                     self.age_num_labels.append(age_num_label)
 
+=======
+>>>>>>> c1eb4f8... add baselinev2
 
                     self.indices[phase].append(cnt)
                     cnt += 1

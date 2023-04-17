@@ -68,7 +68,10 @@ class F1Loss(nn.Module):
 
 _criterion_entrypoints = {
     'cross_entropy': nn.CrossEntropyLoss,
+<<<<<<< HEAD
     'mse' : nn.MSELoss,
+=======
+>>>>>>> c1eb4f8... add baselinev2
     'focal': FocalLoss,
     'label_smoothing': LabelSmoothingLoss,
     'f1': F1Loss

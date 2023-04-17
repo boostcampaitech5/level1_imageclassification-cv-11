@@ -1,10 +1,14 @@
 import torch.nn as nn
 import torch.nn.functional as F
+<<<<<<< HEAD
 import timm
 <<<<<<< HEAD
 =======
 
 >>>>>>> c7e2be0... add multioutput model
+=======
+
+>>>>>>> c1eb4f8... add baselinev2
 
 class BaseModel(nn.Module):
     def __init__(self, num_classes):
@@ -38,6 +42,7 @@ class BaseModel(nn.Module):
 
 
 # Custom Model Template
+<<<<<<< HEAD
 class EfficientBase(nn.Module):
     def __init__(self, num_classes=18):
         super().__init__()
@@ -140,18 +145,28 @@ class MultiOutputModel(nn.Module):
         self.branch_gender = nn.Linear(in_features=1000, out_features=2)
         self.branch_age_class = nn.Linear(in_features=1000, out_features=3)
         self.branch_age_val = nn.Linear(in_features=1000, out_features=1)
+=======
+class MyModel(nn.Module):
+    def __init__(self, num_classes):
+        super().__init__()
+
+>>>>>>> c1eb4f8... add baselinev2
         """
         1. 위와 같이 생성자의 parameter 에 num_claases 를 포함해주세요.
         2. 나만의 모델 아키텍쳐를 디자인 해봅니다.
         3. 모델의 output_dimension 은 num_classes 로 설정해주세요.
         """
+<<<<<<< HEAD
 >>>>>>> c7e2be0... add multioutput model
+=======
+>>>>>>> c1eb4f8... add baselinev2
 
     def forward(self, x):
         """
         1. 위에서 정의한 모델 아키텍쳐를 forward propagation 을 진행해주세요
         2. 결과로 나온 output 을 return 해주세요
         """
+<<<<<<< HEAD
         out = self.backbone(x)
         out_mask = self.branch_mask(out)
         out_gender = self.branch_gender(out)
@@ -174,3 +189,6 @@ class MultiOutputModel(nn.Module):
 =======
         return out_mask, out_gender, out_age_class, out_age_num
 >>>>>>> c7e2be0... add multioutput model
+=======
+        return x
+>>>>>>> c1eb4f8... add baselinev2
