@@ -68,7 +68,18 @@ class ResNet34(nn.Module):
         out = self.net(x)
 
         return out
-    
+
+class EfficientNetB1(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        self.net = models.get_model('EfficientNet_B1', weights='DEFAULT')
+
+    def forward(self, x):
+        out = self.net(x)
+
+        return out
+
 # class MultiLabelModel(nn.module):
 #     def __init__(self):
 #         super().__init__()
