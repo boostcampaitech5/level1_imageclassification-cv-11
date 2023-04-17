@@ -8,6 +8,7 @@ import re
 from importlib import import_module
 from pathlib import Path
 <<<<<<< HEAD
+<<<<<<< HEAD
 from tqdm import tqdm
 =======
 <<<<<<< HEAD
@@ -20,6 +21,9 @@ from tqdm import tqdm
 from tqdm import tqdm
 >>>>>>> 408d182... fix val_acc
 >>>>>>> ef64d35... fix val_acc
+=======
+from tqdm import tqdm
+>>>>>>> 408d182... fix val_acc
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -356,6 +360,7 @@ def train(data_dir, model_dir, args):
         loss_value = 0
         matches = 0
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -388,6 +393,9 @@ def train(data_dir, model_dir, args):
 =======
             inputs, labels,_ = train_batch
 =======
+=======
+        for idx, train_batch in tqdm(enumerate(train_loader)):
+>>>>>>> 408d182... fix val_acc
             inputs, labels, _ = train_batch
 >>>>>>> d606e02... fix: too may values to unpack for validation dataset
             inputs = inputs['image'].to(device)
@@ -474,6 +482,7 @@ def train(data_dir, model_dir, args):
                 acc_item = (labels == preds).sum().item()
                 val_loss_items.append(loss_item)
 <<<<<<< HEAD
+<<<<<<< HEAD
                 val_acc_items.append(acc_item/val_loader.batch_size)
 =======
 <<<<<<< HEAD
@@ -486,6 +495,9 @@ def train(data_dir, model_dir, args):
                 val_acc_items.append(acc_item/val_loader.batch_size)
 >>>>>>> 408d182... fix val_acc
 >>>>>>> ef64d35... fix val_acc
+=======
+                val_acc_items.append(acc_item/val_loader.batch_size)
+>>>>>>> 408d182... fix val_acc
 
                 if figure is None:
                     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
@@ -495,6 +507,7 @@ def train(data_dir, model_dir, args):
                     )
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -541,6 +554,9 @@ def train(data_dir, model_dir, args):
 =======
             val_acc = np.sum(val_acc_items) / len(val_sets)
 >>>>>>> 4df016b... complit v1
+=======
+            val_acc = np.mean(val_acc_items)
+>>>>>>> 408d182... fix val_acc
             best_val_loss = min(best_val_loss, val_loss)
             if val_acc > best_val_acc:
                 print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
