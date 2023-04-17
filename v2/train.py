@@ -7,7 +7,7 @@ import random
 import re
 from importlib import import_module
 from pathlib import Path
-
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -181,7 +181,7 @@ def train(data_dir, model_dir, args):
         model.train()
         loss_value = 0
         matches = 0
-        for idx, train_batch in enumerate(train_loader):
+        for idx, train_batch in tqdm(enumerate(train_loader)):
             inputs, labels, _ = train_batch
             inputs = inputs['image'].to(device)
             labels = labels.to(device)
@@ -231,7 +231,7 @@ def train(data_dir, model_dir, args):
                 loss_item = criterion(outs, labels).item()
                 acc_item = (labels == preds).sum().item()
                 val_loss_items.append(loss_item)
-                val_acc_items.append(acc_item)
+                val_acc_items.append(acc_item/val_loader.batch_size)
 
                 if figure is None:
                     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
@@ -241,7 +241,7 @@ def train(data_dir, model_dir, args):
                     )
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
-            val_acc = np.sum(val_acc_items) / len(val_sets)
+            val_acc = np.mean(val_acc_items)
             best_val_loss = min(best_val_loss, val_loss)
             if val_acc > best_val_acc:
                 print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
