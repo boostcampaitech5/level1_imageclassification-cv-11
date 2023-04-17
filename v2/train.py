@@ -484,6 +484,7 @@ def train(data_dir, model_dir, args):
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
 <<<<<<< HEAD
+<<<<<<< HEAD
             val_acc = np.mean(val_acc_items)
 =======
 <<<<<<< HEAD
@@ -517,6 +518,9 @@ def train(data_dir, model_dir, args):
             val_acc = np.mean(val_acc_items)
 >>>>>>> 408d182... fix val_acc
 >>>>>>> ef64d35... fix val_acc
+=======
+            val_acc = np.sum(val_acc_items) / len(val_sets)
+>>>>>>> 04c4854... add timm efficientbase
             best_val_loss = min(best_val_loss, val_loss)
             if val_acc > best_val_acc:
                 print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
