@@ -1,6 +1,8 @@
 import torch.nn as nn
 import torch.nn.functional as F
+import torchvision.models as models
 
+classification_models = models.list_models(module=models)
 
 class BaseModel(nn.Module):
     def __init__(self, num_classes):
@@ -42,6 +44,17 @@ class EfficientBase(nn.Module):
 
     def forward(self, x):
         out = self.backbone(x)
+       
+        return out
+    
+class ResNet18(nn.Module):
+    def __init__(self, num_classes=18):
+        super().__init__()
+        
+        self.net = models.get_model('ResNet18', weights='DEFAULT')
+
+    def forward(self, x):
+        out = self.net(x)
        
         return out
     
