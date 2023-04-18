@@ -34,7 +34,9 @@ class BaseModel(nn.Module):
         return self.fc(x)
 
 
-# Custom Model Template
+############################## Backbone Models ##############################
+
+
 class EfficientBase(nn.Module):
     def __init__(self, num_classes=1000):
         super().__init__()
@@ -111,6 +113,10 @@ class ViTSmall_Patch16_384(nn.Module):
 
         return out
 
+
+############################## Custom Output Models ##############################
+
+
 class SingleOutputModel(nn.Module):
     def __init__(self, in_features=1000, model=EfficientBase()):
         super().__init__()
@@ -148,3 +154,4 @@ class MultiOutputModel(nn.Module):
         out_age_num = self.branch_age_val(out)
         
         return out_mask, out_gender, out_age_class, out_age_num
+
