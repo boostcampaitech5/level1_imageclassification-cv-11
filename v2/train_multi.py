@@ -156,11 +156,18 @@ def train(data_dir, model_dir, args):
     train_loader, val_loader = fold(i)
     
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-    model = model_module().to(device)
+    model = model_module(num_classes=num_classes).to(device)
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
-    criterion = create_criterion(args.criterion)  # default: cross_entropy
+    criterion_mask = create_criterion(args.criterion)   # default: cross_entropy
+    criterion_gender = create_criterion(args.criterion)
+    criterion_age = create_criterion(args.criterion)
+    criterion_mse = torch.nn.MSELoss()                  # age regression loss
+    
+    # set alpha value to penalize age MSE loss
+    alpha = args.use_age
+    
     # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
     optimizer = opt_module(
         filter(lambda p: p.requires_grad, model.parameters()),
@@ -182,21 +189,42 @@ def train(data_dir, model_dir, args):
         loss_value = 0
         matches = 0
         for idx, train_batch in tqdm(enumerate(train_loader)):
-            inputs, labels, _ = train_batch
+            inputs, labels, age_num_labels = train_batch
+            
+            mask_labels = ((labels // 6) % 3)
+            gender_labels = ((labels // 3) % 2)
+            age_labels = (labels % 3)
+            
             inputs = inputs['image'].to(device)
-            labels = labels.to(device)
+            mask_labels = mask_labels.to(device)
+            gender_labels = gender_labels.to(device)
+            age_labels = age_labels.to(device)
+            age_num_labels = age_num_labels.to(device)
 
             optimizer.zero_grad()
 
-            outs = model(inputs)
-            preds = torch.argmax(outs, dim=-1)
-            loss = criterion(outs, labels)
+            mask_outs, gender_outs, age_outs, age_num_outs = model(inputs)
+            
+            # preds = torch.argmax(outs, dim=-1)
+            loss1 = criterion_mask(mask_outs, mask_labels)
+            loss2 = criterion_gender(gender_outs, gender_labels)
+            loss3 = criterion_age(age_outs, age_labels)
+            loss4 = criterion_mse(age_num_outs, age_num_labels.unsqueeze(1).float()) * alpha
 
+            loss = loss1 + loss2 + loss3 + loss4
             loss.backward()
             optimizer.step()
 
             loss_value += loss.item()
-            matches += (preds == labels).sum().item()
+            # mask_matches += (mask_outs.argmax(1).detach().cpu().numpy().tolist() == mask_labels).sum().item()
+            # gender_matches += (gender_outs.argmax(1).detach().cpu().numpy().tolist() == gender_labels).sum().item()
+            # age_matches += (age_outs.argmax(1).detach().cpu().numpy().tolist() == age_labels).sum().item()
+            pred1 = mask_outs.argmax(1).detach().cpu().numpy()
+            pred2 = gender_outs.argmax(1).detach().cpu().numpy()
+            pred3 = age_outs.argmax(1).detach().cpu().numpy()
+
+            matches += (torch.Tensor(pred1*6+pred2*3+pred3)==labels).sum().item()
+            
             if (idx + 1) % args.log_interval == 0:
                 train_loss = loss_value / args.log_interval
                 train_acc = matches / args.batch_size / args.log_interval
@@ -221,19 +249,48 @@ def train(data_dir, model_dir, args):
             val_acc_items = []
             figure = None
             for val_batch in val_loader:
-                inputs, labels, _ = val_batch
-                inputs = inputs['image'].to(device)
-                labels = labels.to(device)
+                inputs, labels, age_num_labels = val_batch
                 
-                outs = model(inputs)
-                preds = torch.argmax(outs, dim=-1)
+                mask_labels = ((labels // 6) % 3)
+                gender_labels = ((labels // 3) % 2)
+                age_labels = (labels % 3)
+                
+                inputs = inputs['image'].to(device)
+                mask_labels = mask_labels.to(device)
+                gender_labels = gender_labels.to(device)
+                age_labels = age_labels.to(device)
+                age_num_labels = age_num_labels.to(device)
 
-                loss_item = criterion(outs, labels).item()
-                acc_item = (labels == preds).sum().item()
+                                
+                mask_outs, gender_outs, age_outs, age_num_outs = model(inputs)
+                
+                # preds = torch.argmax(outs, dim=-1)
+                loss1 = criterion_mask(mask_outs, mask_labels)
+                loss2 = criterion_gender(gender_outs, gender_labels)
+                loss3 = criterion_age(age_outs, age_labels)
+                loss4 = criterion_mse(age_num_outs, age_num_labels.unsqueeze(1).float()) * alpha
+                
+                loss = loss1 + loss2 + loss3 + loss4
+
+
+                loss_item = loss.item()
+                
+                pred1 = mask_outs.argmax(1).detach().cpu().numpy()
+                pred2 = gender_outs.argmax(1).detach().cpu().numpy()
+                pred3 = age_outs.argmax(1).detach().cpu().numpy()
+                
+                acc_item = (torch.Tensor(pred1*6+pred2*3+pred3)==labels).sum().item()
+                
                 val_loss_items.append(loss_item)
                 val_acc_items.append(acc_item/val_loader.batch_size)
+                
+                
+                
 
                 if figure is None:
+                    ######################
+                    preds = torch.Tensor(pred1*6+pred2*3+pred3)
+                    ######################
                     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
                     inputs_np = dataset_module.denormalize_image(inputs_np, dataset.mean, dataset.std)
                     figure = grid_image(
@@ -282,7 +339,6 @@ if __name__ == '__main__':
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))
-
 
     args = parser.parse_args()
     print(args)
