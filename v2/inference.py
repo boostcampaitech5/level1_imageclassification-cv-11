@@ -49,6 +49,7 @@ def inference(data_dir, model_dir, output_dir, args):
 
     img_paths = [os.path.join(img_root, img_id) for img_id in info.ImageID]
     dataset = TestDataset(img_paths, args.resize)
+    
     loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=args.batch_size,
@@ -92,8 +93,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Data and model checkpoints directories
-    parser.add_argument('--batch_size', type=int, default=1000, help='input batch size for validing (default: 1000)')
-    parser.add_argument('--resize', type=tuple, default=(96, 128), help='resize size for image when you trained (default: (96, 128))')
+    parser.add_argument('--batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
+    parser.add_argument('--resize', type=tuple, default=(512, 384), help='resize size for image when you trained (default: (512, 384))')
     parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: EfficientBase)')
     parser.add_argument('--is_multi', type=bool, default='false', help='enable multi output classification (default: false)')
 
