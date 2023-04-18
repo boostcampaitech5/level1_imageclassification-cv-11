@@ -153,11 +153,13 @@ class SingleOutputModel(nn.Module):
 class MultiOutputModel(nn.Module):
     def __init__(self, in_features=1000, model=EfficientBase()):
         super().__init__()
+
         self.net = model
         self.branch_mask = nn.Linear(in_features=in_features, out_features=3)
         self.branch_gender = nn.Linear(in_features=in_features, out_features=2)
         self.branch_age_class = nn.Linear(in_features=in_features, out_features=3)
         self.branch_age_val = nn.Linear(in_features=in_features, out_features=1)
+<<<<<<< HEAD
         """
         1. 위와 같이 생성자의 parameter 에 num_claases 를 포함해주세요.
         2. 나만의 모델 아키텍쳐를 디자인 해봅니다.
@@ -165,11 +167,10 @@ class MultiOutputModel(nn.Module):
         """
 >>>>>>> c7e2be0... add multioutput model
 
+=======
+        
+>>>>>>> 47e08ae... comment: delete baseline model comments
     def forward(self, x):
-        """
-        1. 위에서 정의한 모델 아키텍쳐를 forward propagation 을 진행해주세요
-        2. 결과로 나온 output 을 return 해주세요
-        """
         out = self.net(x)
         out_mask = self.branch_mask(out)
         out_gender = self.branch_gender(out)
