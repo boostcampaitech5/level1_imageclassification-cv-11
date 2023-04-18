@@ -18,7 +18,7 @@ from torch.utils.tensorboard import SummaryWriter
 from dataset import MaskBaseDataset
 from loss import create_criterion
 import augmentation
-
+import model as mymodel
 
 def seed_everything(seed):
     torch.manual_seed(seed)
@@ -149,14 +149,14 @@ def train(data_dir, model_dir, args):
         return train_loader, val_loader
 
     # -- model
-    model_module = getattr(import_module("model"), args.model)
+    model_module = getattr(import_module("model"), args.model)(num_classes=1000)
     opt_module = getattr(import_module("torch.optim"), args.optimizer)
     
     i = 0
     train_loader, val_loader = fold(i)
     
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-    model = model_module(num_classes=num_classes).to(device)
+    model = mymodel.MultiOutputModel(in_features=1000, model=model_module).to(device)
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric

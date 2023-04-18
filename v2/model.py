@@ -112,13 +112,13 @@ class ViTSmall_Patch16_384(nn.Module):
         return out
 
 class MultiOutputModel(nn.Module):
-    def __init__(self, num_classes=1000):
+    def __init__(self, in_features=1000, model=EfficientBase()):
         super().__init__()
-        self.net = timm.create_model('efficientnet_b0', pretrained=True, num_classes=num_classes)
-        self.branch_mask = nn.Linear(in_features=1000, out_features=3)
-        self.branch_gender = nn.Linear(in_features=1000, out_features=2)
-        self.branch_age_class = nn.Linear(in_features=1000, out_features=3)
-        self.branch_age_val = nn.Linear(in_features=1000, out_features=1)
+        self.net = model
+        self.branch_mask = nn.Linear(in_features=in_features, out_features=3)
+        self.branch_gender = nn.Linear(in_features=in_features, out_features=2)
+        self.branch_age_class = nn.Linear(in_features=in_features, out_features=3)
+        self.branch_age_val = nn.Linear(in_features=in_features, out_features=1)
         """
         1. 위와 같이 생성자의 parameter 에 num_claases 를 포함해주세요.
         2. 나만의 모델 아키텍쳐를 디자인 해봅니다.
@@ -130,7 +130,7 @@ class MultiOutputModel(nn.Module):
         1. 위에서 정의한 모델 아키텍쳐를 forward propagation 을 진행해주세요
         2. 결과로 나온 output 을 return 해주세요
         """
-        out = self.backbone(x)
+        out = self.net(x)
         out_mask = self.branch_mask(out)
         out_gender = self.branch_gender(out)
         out_age_class = self.branch_age_class(out)
