@@ -133,9 +133,9 @@ class ViTSmall_Patch16_384(nn.Module):
 #         """
 =======
 class MultiOutputModel(nn.Module):
-    def __init__(self, num_classes):        ## no num_classes in multi-output model
+    def __init__(self, num_classes=1000):
         super().__init__()
-        self.backbone = timm.create_model('efficientnet_b0', pretrained=True, num_classes=1000)
+        self.backbone = timm.create_model('efficientnet_b0', pretrained=True, num_classes=num_classes)
         self.branch_mask = nn.Linear(in_features=1000, out_features=3)
         self.branch_gender = nn.Linear(in_features=1000, out_features=2)
         self.branch_age_class = nn.Linear(in_features=1000, out_features=3)
