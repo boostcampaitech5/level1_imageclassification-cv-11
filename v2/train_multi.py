@@ -163,7 +163,7 @@ def train(data_dir, model_dir, args):
     criterion_mask = create_criterion(args.criterion)   # default: cross_entropy
     criterion_gender = create_criterion(args.criterion)
     criterion_age = create_criterion(args.criterion)
-    criterion_mse = torch.nn.MSELoss()                  # age regression loss
+    criterion_mse = create_criterion('mse')             # age regression loss
     
     # set alpha value to penalize age MSE loss
     alpha = args.use_age
