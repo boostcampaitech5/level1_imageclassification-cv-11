@@ -115,12 +115,14 @@ class SingleOutputModel(nn.Module):
     def __init__(self, in_features=1000, model=EfficientBase()):
         super().__init__()
 
-        self.net = model
+        self.backbone = model
+
         self.branch_class = nn.Linear(in_features=in_features, out_features=18)
         self.branch_age_val = nn.Linear(in_features=in_features, out_features=1)
 
     def forward(self, x):
-        out = self.net(x)
+        out = self.backbone(x)
+        
         out_class = self.branch_class(out)
         out_age_num = self.branch_age_val(out)
 
@@ -130,14 +132,16 @@ class MultiOutputModel(nn.Module):
     def __init__(self, in_features=1000, model=EfficientBase()):
         super().__init__()
 
-        self.net = model
+        self.backbone = model
+        
         self.branch_mask = nn.Linear(in_features=in_features, out_features=3)
         self.branch_gender = nn.Linear(in_features=in_features, out_features=2)
         self.branch_age_class = nn.Linear(in_features=in_features, out_features=3)
         self.branch_age_val = nn.Linear(in_features=in_features, out_features=1)
         
     def forward(self, x):
-        out = self.net(x)
+        out = self.backbone(x)
+
         out_mask = self.branch_mask(out)
         out_gender = self.branch_gender(out)
         out_age_class = self.branch_age_class(out)
