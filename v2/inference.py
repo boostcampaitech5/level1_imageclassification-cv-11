@@ -10,6 +10,9 @@ from torch.utils.data import DataLoader
 from dataset import TestDataset, MaskBaseDataset
 import model as Models
 
+from albumentations import *
+from albumentations.pytorch import ToTensorV2
+from tqdm import tqdm
 
 def load_model(saved_model, device):
     model_cls = getattr(import_module("model"), args.model)(num_classes=1000)
@@ -22,13 +25,14 @@ def load_model(saved_model, device):
     else:
         model = Models.SingleOutputModel(model=model_cls)
 
+def load_model(saved_model, num_classes, device):
+    model_module = getattr(import_module("model"), args.model)(num_classes=1000)
+    model = Models.SingleOutputModel(model=model_module).to(device)
     # tarpath = os.path.join(saved_model, 'best.tar.gz')
     # tar = tarfile.open(tarpath, 'r:gz')
     # tar.extractall(path=saved_model)
-
     model_path = os.path.join(saved_model, 'best.pth')
     model.load_state_dict(torch.load(model_path, map_location=device))
-
     return model
 
 
@@ -43,26 +47,32 @@ def inference(data_dir, model_dir, output_dir, args):
     model = load_model(model_dir, device).to(device)
     model.eval()
 
-    img_root = os.path.join(data_dir, 'images')
+    img_root = os.path.join(data_dir, 'eval_segimages')
     info_path = os.path.join(data_dir, 'info.csv')
     info = pd.read_csv(info_path)
 
     img_paths = [os.path.join(img_root, img_id) for img_id in info.ImageID]
-    dataset = TestDataset(img_paths, args.resize)
     
-    loader = torch.utils.data.DataLoader(
+    mean, std = (0.56019265, 0.52410305, 0.50145299), (0.23308824, 0.24294489, 0.2456003)
+
+    transform = Compose([
+        Resize(512, 384),
+        RandomCrop(384, 384),
+        Normalize(mean=mean, std=std, max_pixel_value=255.0, p=1.0),
+        ToTensorV2(p=1.0),
+    ], p=1.0)
+
+    dataset = TestDataset(img_paths, transform)
+
+    loader = DataLoader(
         dataset,
-        batch_size=args.batch_size,
-        num_workers=multiprocessing.cpu_count() // 2,
-        shuffle=False,
-        pin_memory=use_cuda,
-        drop_last=False,
+        shuffle=False
     )
 
     print("Calculating inference results..")
     preds = []
     with torch.no_grad():
-        for idx, images in enumerate(loader):
+        for idx, images in tqdm(enumerate(loader)):
             images = images.to(device)
 
             # -- multi output model
