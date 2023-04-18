@@ -37,7 +37,9 @@ class BaseModel(nn.Module):
         return self.fc(x)
 
 
-# Custom Model Template
+############################## Backbone Models ##############################
+
+
 class EfficientBase(nn.Module):
     def __init__(self, num_classes=1000):
         super().__init__()
@@ -116,6 +118,7 @@ class ViTSmall_Patch16_384(nn.Module):
         return out
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 # class MultiLabelModel(nn.module):
 #     def __init__(self):
@@ -134,6 +137,12 @@ class ViTSmall_Patch16_384(nn.Module):
 #         """
 =======
 =======
+=======
+
+############################## Custom Output Models ##############################
+
+
+>>>>>>> 17d8fee... comment: section out model.py
 class SingleOutputModel(nn.Module):
     def __init__(self, in_features=1000, model=EfficientBase()):
         super().__init__()
@@ -196,4 +205,8 @@ class MultiOutputModel(nn.Module):
 #         return out_mask, out_gender, out_age_class, out_age_num
 =======
         return out_mask, out_gender, out_age_class, out_age_num
+<<<<<<< HEAD
 >>>>>>> c7e2be0... add multioutput model
+=======
+
+>>>>>>> 17d8fee... comment: section out model.py
