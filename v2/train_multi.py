@@ -19,6 +19,8 @@ from dataset import MaskBaseDataset
 from loss import create_criterion
 import augmentation
 import model as Models
+import wandb
+from sklearn.metrics import f1_score, accuracy_score
 
 
 def seed_everything(seed):
@@ -84,10 +86,8 @@ def increment_path(path, exist_ok=False):
         n = max(i) + 1 if i else 2
         return f"{path}{n}"
 
-def train(data_dir, model_dir, args):
+def train(data_dir, model_dir, save_dir, args):
     seed_everything(args.seed)
-
-    save_dir = increment_path(os.path.join(model_dir, args.name))
 
     # -- settings
     use_cuda = torch.cuda.is_available()
@@ -177,9 +177,19 @@ def train(data_dir, model_dir, args):
     with open(os.path.join(save_dir, 'config.json'), 'w', encoding='utf-8') as f:
         json.dump(vars(args), f, ensure_ascii=False, indent=4)
 
-    best_val_acc = 0
+    best_val_f1 = 0
     best_val_loss = np.inf
     for epoch in range(args.epochs):
+        
+        category_preds = []
+        category_trues = []
+        
+        train_loss_all =[]
+        train_loss1 = []
+        train_loss2 = []
+        train_loss3 = []
+        train_loss4 = []
+        
         # train loop
         model.train()
         loss_value = 0
@@ -221,6 +231,15 @@ def train(data_dir, model_dir, args):
 
             matches += (torch.Tensor(pred1*6+pred2*3+pred3)==labels).sum().item()
             
+            category_preds += (pred1*6+pred2*3+pred3).tolist()
+            category_trues += labels.detach().cpu().numpy().tolist()
+            
+            train_loss_all.append(loss.item())
+            train_loss1.append(loss1.item())
+            train_loss2.append(loss2.item())
+            train_loss3.append(loss3.item())
+            train_loss4.append(loss4.item())
+            
             if (idx + 1) % args.log_interval == 0:
                 train_loss = loss_value / args.log_interval
                 train_acc = matches / args.batch_size / args.log_interval
@@ -244,6 +263,17 @@ def train(data_dir, model_dir, args):
             val_loss_items = []
             val_acc_items = []
             figure = None
+            
+            val_category_preds = []
+            val_category_trues = []
+            
+            val_loss = []
+            val_loss1 = []
+            val_loss2 = []
+            val_loss3 = []
+            val_loss4 = []
+            
+            
             for val_batch in val_loader:
                 inputs, labels, age_num_labels = val_batch
                 
@@ -270,14 +300,23 @@ def train(data_dir, model_dir, args):
 
                 loss_item = loss.item()
                 
+                val_loss1.append(loss1.item())
+                val_loss2.append(loss2.item())
+                val_loss3.append(loss3.item())
+                val_loss4.append(loss4.item())
+
+
+                
                 pred1 = mask_outs.argmax(1).detach().cpu().numpy()
                 pred2 = gender_outs.argmax(1).detach().cpu().numpy()
                 pred3 = age_outs.argmax(1).detach().cpu().numpy()
                 
                 acc_item = (torch.Tensor(pred1*6+pred2*3+pred3)==labels).sum().item()
-                
                 val_loss_items.append(loss_item)
                 val_acc_items.append(acc_item/val_loader.batch_size)
+                
+                val_category_preds += (pred1*6+pred2*3+pred3).tolist()
+                val_category_trues += labels.detach().cpu().numpy().tolist()
 
                 if figure is None:
                     preds = torch.Tensor(pred1*6+pred2*3+pred3)
@@ -290,17 +329,38 @@ def train(data_dir, model_dir, args):
             val_loss = np.sum(val_loss_items) / len(val_loader)
             val_acc = np.mean(val_acc_items)
             best_val_loss = min(best_val_loss, val_loss)
-            if val_acc > best_val_acc:
-                print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
+            
+            _train_f1 = f1_score(category_trues, category_preds, average='macro')
+            _train_accuracy = accuracy_score(category_trues, category_preds)
+
+            _train_loss = np.mean(train_loss_all)
+            _train_loss1 = np.mean(train_loss1)
+            _train_loss2 = np.mean(train_loss2)
+            _train_loss3 = np.mean(train_loss3)
+            _train_loss4 = np.mean(train_loss4)            
+            _val_loss1 = np.mean(val_loss1)
+            _val_loss2 = np.mean(val_loss2)
+            _val_loss3 = np.mean(val_loss3)            
+            _val_loss4 = np.mean(val_loss4)
+            
+            _val_f1 = f1_score(val_category_trues,val_category_preds, average='macro')
+
+            wandb.log({'Train loss':_train_loss,'Train F1':_train_f1,'Train Acc':_train_accuracy,'Train loss 1' : _train_loss1,'Train loss 2' : _train_loss2,'Train loss 3' : _train_loss3,'Train loss 4':_train_loss4,'Train loss 123':_train_loss-_train_loss4,
+                   'Val loss':val_loss,'Val F1':_val_f1, 'Val Acc':val_acc,'Val loss 1' : _val_loss1,'Val loss 2' : _val_loss2,'Val loss 3' : _val_loss3,'Val loss 4':_val_loss4,'Val loss 123':val_loss-_val_loss4})      ## logging wandb
+            
+            
+            
+            if _val_f1 > best_val_f1:
+                print(f"New best model for val f1 : {_val_f1:4.2%}! saving the best model..")
                 torch.save(model.module.state_dict(), f"{save_dir}/best.pth")
-                best_val_acc = val_acc
+                best_val_f1 = _val_f1
             torch.save(model.module.state_dict(), f"{save_dir}/last.pth")
             print(
-                f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2} || "
-                f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2}"
+                f"[Val] f1 : {_val_f1:4.2%}, loss: {val_loss:4.2} || "
+                f"best f1 : {best_val_f1:4.2%}, best loss: {best_val_loss:4.2}"
             )
             logger.add_scalar("Val/loss", val_loss, epoch)
-            logger.add_scalar("Val/accuracy", val_acc, epoch)
+            logger.add_scalar("Val/f1", _val_f1, epoch)
             logger.add_figure("results", figure, epoch)
             print()
 
@@ -310,14 +370,14 @@ if __name__ == '__main__':
 
     # Data and model checkpoints directories
     parser.add_argument('--seed', type=int, default=42, help='random seed (default: 42)')
-    parser.add_argument('--epochs', type=int, default=1, help='number of epochs to train (default: 1)')
+    parser.add_argument('--epochs', type=int, default=15, help='number of epochs to train (default: 15)')
     parser.add_argument('--dataset', type=str, default='MaskBaseDataset', help='dataset augmentation type (default: MaskBaseDataset)')
     parser.add_argument('--augmentation', type=str, default='BaseAugmentation', help='data augmentation type (default: BaseAugmentation)')
     parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
     parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: EfficientBase)')
-    parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
+    parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
@@ -326,6 +386,9 @@ if __name__ == '__main__':
     parser.add_argument('--name', default='exp', help='model save at {SM_MODEL_DIR}/{name}')
     parser.add_argument('--fold', default=1, help = 'kfold')
     parser.add_argument('--use_age', type=float, default=0, help='weight of mseloss(age) (default: 0)')
+    parser.add_argument('--seg', type=bool, default=False, help='enable segmentation (default: False)')
+    parser.add_argument('--mislabel', type=bool, default=False, help='train with corrected label (default: False)')
+
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))
@@ -335,5 +398,28 @@ if __name__ == '__main__':
 
     data_dir = args.data_dir
     model_dir = args.model_dir
+    save_dir = increment_path(os.path.join(model_dir, args.name))
+    
+    config = {'save_dir' : save_dir,
+            'use_age': args.use_age,
+            'multi':True, 
+            'seg':args.seg,
+            'mislabel': args.mislabel,
+            'model':args.model,
+            'augmentation':args.augmentation,
+            'batch_size':args.batch_size,
+            'criterion':args.criterion,
+            'epoch':args.epochs,
+            'fold':args.fold,
+            'lr':args.lr,
+            'lr_decay_step':args.lr_decay_step,
+            'optimizer':args.optimizer,
+            'resize':str(args.resize[0])+'X'+str(args.resize[1]),
+            'seed':args.seed}
+    
+    dir = save_dir.split('/')[-1]
+    
+    # # wandb.init(project="test",name=f'use_age:{args.use_age}-multi:0-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-augmentation:{args.augmentation}-batch_size:{args.batch_size}-criterion:{args.criterion}-epoch:{args.epochs}-fold:{args.fold}-lr:{args.lr}-lr_decay_step:{args.lr_decay_step}-optimizer:{args.optimizer}-resize:{args.resize[0]}X{args.resize[1]}-seed:{args.seed}')
+    wandb.init(project='test',name=f'use_age:{args.use_age}-multi:{True}-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-exp:{dir}',config= config)
 
-    train(data_dir, model_dir, args)
+    train(data_dir, model_dir,save_dir, args)
