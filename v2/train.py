@@ -18,6 +18,7 @@ from torch.utils.tensorboard import SummaryWriter
 from dataset import MaskBaseDataset
 from loss import create_criterion
 import augmentation
+import model as Models
 
 
 def seed_everything(seed):
@@ -28,7 +29,6 @@ def seed_everything(seed):
     torch.backends.cudnn.benchmark = False
     np.random.seed(seed)
     random.seed(seed)
-
 
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
@@ -67,7 +67,6 @@ def grid_image(np_images, gts, preds, n=16, shuffle=False):
 
     return figure
 
-
 def increment_path(path, exist_ok=False):
     """ Automatically increment path, i.e. runs/exp --> runs/exp0, runs/exp1 etc.
 
@@ -84,7 +83,6 @@ def increment_path(path, exist_ok=False):
         i = [int(m.groups()[0]) for m in matches if m]
         n = max(i) + 1 if i else 2
         return f"{path}{n}"
-
 
 def train(data_dir, model_dir, args):
     seed_everything(args.seed)
@@ -149,18 +147,22 @@ def train(data_dir, model_dir, args):
         return train_loader, val_loader
 
     # -- model
-    model_module = getattr(import_module("model"), args.model)
+    model_module = getattr(import_module("model"), args.model)(num_classes=1000)
     opt_module = getattr(import_module("torch.optim"), args.optimizer)
     
     i = 0
     train_loader, val_loader = fold(i)
     
-    # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-    model = model_module().to(device)
+    model = Models.SingleOutputModel(model=model_module).to(device)
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
     criterion = create_criterion(args.criterion)  # default: cross_entropy
+    criterion_mse = create_criterion('mse')       # age regression loss
+
+    # set alpha value to penalize age MSE loss
+    alpha = args.use_age
+    
     # opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
     optimizer = opt_module(
         filter(lambda p: p.requires_grad, model.parameters()),
@@ -182,15 +184,21 @@ def train(data_dir, model_dir, args):
         loss_value = 0
         matches = 0
         for idx, train_batch in tqdm(enumerate(train_loader)):
-            inputs, labels, _ = train_batch
+            inputs, labels, age_num_labels = train_batch
+            
             inputs = inputs['image'].to(device)
             labels = labels.to(device)
+            age_num_labels = age_num_labels.to(device)
 
             optimizer.zero_grad()
 
-            outs = model(inputs)
+            outs, age_num_outs = model(inputs)
             preds = torch.argmax(outs, dim=-1)
-            loss = criterion(outs, labels)
+
+            loss0 = criterion(outs, labels)
+            loss4 = criterion_mse(age_num_outs, age_num_labels.unsqueeze(1).float()) * alpha
+
+            loss = loss0 + loss4
 
             loss.backward()
             optimizer.step()
@@ -221,14 +229,21 @@ def train(data_dir, model_dir, args):
             val_acc_items = []
             figure = None
             for val_batch in val_loader:
-                inputs, labels, _ = val_batch
+                inputs, labels, age_num_labels = val_batch
+                
                 inputs = inputs['image'].to(device)
                 labels = labels.to(device)
+                age_num_labels = age_num_labels.to(device)
                 
-                outs = model(inputs)
+                outs, age_num_outs = model(inputs)
                 preds = torch.argmax(outs, dim=-1)
 
-                loss_item = criterion(outs, labels).item()
+                loss0 = criterion(outs, labels)
+                loss4 = criterion_mse(age_num_outs, age_num_labels.unsqueeze(1).float()) * alpha
+
+                loss = loss0 + loss4
+
+                loss_item = loss.item()
                 acc_item = (labels == preds).sum().item()
                 val_loss_items.append(loss_item)
                 val_acc_items.append(acc_item/val_loader.batch_size)
@@ -269,7 +284,7 @@ if __name__ == '__main__':
     parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
-    parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
+    parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: BaseModel)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: SGD)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
@@ -282,7 +297,6 @@ if __name__ == '__main__':
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))
-
 
     args = parser.parse_args()
     print(args)
