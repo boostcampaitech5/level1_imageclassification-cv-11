@@ -10,7 +10,11 @@ from torch.utils.data import DataLoader
 from dataset import TestDataset, MaskBaseDataset
 import model as Models
 
+from albumentations import *
+from albumentations.pytorch import ToTensorV2
+from tqdm import tqdm
 
+<<<<<<< HEAD
 def load_model(saved_model, device):
     model_cls = getattr(import_module("model"), args.model)(num_classes=1000)
 
@@ -21,14 +25,17 @@ def load_model(saved_model, device):
     # -- single output model
     else:
         model = Models.SingleOutputModel(model=model_cls)
+=======
+>>>>>>> f29f573... add inference.py
 
+def load_model(saved_model, num_classes, device):
+    model_module = getattr(import_module("model"), args.model)(num_classes=1000)
+    model = Models.SingleOutputModel(model=model_module).to(device)
     # tarpath = os.path.join(saved_model, 'best.tar.gz')
     # tar = tarfile.open(tarpath, 'r:gz')
     # tar.extractall(path=saved_model)
-
     model_path = os.path.join(saved_model, 'best.pth')
     model.load_state_dict(torch.load(model_path, map_location=device))
-
     return model
 
 
@@ -43,27 +50,40 @@ def inference(data_dir, model_dir, output_dir, args):
     model = load_model(model_dir, device).to(device)
     model.eval()
 
-    img_root = os.path.join(data_dir, 'images')
+    img_root = os.path.join(data_dir, 'eval_segimages')
     info_path = os.path.join(data_dir, 'info.csv')
     info = pd.read_csv(info_path)
 
     img_paths = [os.path.join(img_root, img_id) for img_id in info.ImageID]
+<<<<<<< HEAD
     dataset = TestDataset(img_paths, args.resize)
     
     loader = torch.utils.data.DataLoader(
+=======
+
+    mean, std = (0.56019265, 0.52410305, 0.50145299), (0.23308824, 0.24294489, 0.2456003)
+
+    transform = Compose([
+        Resize(512, 384),
+        RandomCrop(384, 384),
+        Normalize(mean=mean, std=std, max_pixel_value=255.0, p=1.0),
+        ToTensorV2(p=1.0),
+    ], p=1.0)
+
+    dataset = TestDataset(img_paths, transform)
+
+    loader = DataLoader(
+>>>>>>> f29f573... add inference.py
         dataset,
-        batch_size=args.batch_size,
-        num_workers=multiprocessing.cpu_count() // 2,
-        shuffle=False,
-        pin_memory=use_cuda,
-        drop_last=False,
+        shuffle=False
     )
 
     print("Calculating inference results..")
     preds = []
     with torch.no_grad():
-        for idx, images in enumerate(loader):
+        for idx, images in tqdm(enumerate(loader)):
             images = images.to(device)
+<<<<<<< HEAD
 
             # -- multi output model
             if args.is_multi:
@@ -81,6 +101,10 @@ def inference(data_dir, model_dir, output_dir, args):
             
                 pred = pred.argmax(dim=-1)
 
+=======
+            outs, age_num_outs = model(images)
+            pred = torch.argmax(outs, dim=-1)
+>>>>>>> f29f573... add inference.py
             preds.extend(pred.cpu().numpy())
 
     info['ans'] = preds
@@ -93,10 +117,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Data and model checkpoints directories
+<<<<<<< HEAD
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
     parser.add_argument('--resize', type=tuple, default=(512, 384), help='resize size for image when you trained (default: (512, 384))')
     parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: EfficientBase)')
     parser.add_argument('--is_multi', type=bool, default='false', help='enable multi output classification (default: false)')
+=======
+    parser.add_argument('--batch_size', type=int, default=64, help='input batch size for validing (default: 1000)')
+    parser.add_argument('--resize', type=tuple, default=[128, 96], help='resize size for image when you trained (default: (96, 128))')
+    parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: BaseModel)')
+>>>>>>> f29f573... add inference.py
 
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
