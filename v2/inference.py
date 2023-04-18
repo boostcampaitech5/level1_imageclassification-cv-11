@@ -14,7 +14,13 @@ import model as Models
 def load_model(saved_model, device):
     model_cls = getattr(import_module("model"), args.model)(num_classes=1000)
 
-    model = Models.SingleOutputModel(model=model_cls)
+    # -- multi output model
+    if args.is_multi:
+        model = Models.MultiOutputModel(model=model_cls)
+    
+    # -- single output model
+    else:
+        model = Models.SingleOutputModel(model=model_cls)
 
     # tarpath = os.path.join(saved_model, 'best.tar.gz')
     # tar = tarfile.open(tarpath, 'r:gz')
@@ -57,8 +63,23 @@ def inference(data_dir, model_dir, output_dir, args):
     with torch.no_grad():
         for idx, images in enumerate(loader):
             images = images.to(device)
-            pred, _ = model(images)
-            pred = pred.argmax(dim=-1)
+
+            # -- multi output model
+            if args.is_multi:
+                pred_mask, pred_gender, pred_age, _ = model(images)
+
+                pred_mask = pred_mask.argmax(1).detach()
+                pred_gender = pred_gender.argmax(1).detach()
+                pred_age = pred_age.argmax(1).detach()
+
+                pred = pred_mask * 6 + pred_gender * 3 + pred_age
+
+            # -- single output model
+            else:
+                pred, _ = model(images)
+            
+                pred = pred.argmax(dim=-1)
+
             preds.extend(pred.cpu().numpy())
 
     info['ans'] = preds
@@ -74,6 +95,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=1000, help='input batch size for validing (default: 1000)')
     parser.add_argument('--resize', type=tuple, default=(96, 128), help='resize size for image when you trained (default: (96, 128))')
     parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: EfficientBase)')
+    parser.add_argument('--is_multi', type=bool, default='false', help='enable multi output classification (default: false)')
 
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
