@@ -156,7 +156,7 @@ def train(data_dir, model_dir, args):
     train_loader, val_loader = fold(i)
     
     # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-    model = model_module(num_classes=num_classes).to(device)
+    model = model_module().to(device)
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
