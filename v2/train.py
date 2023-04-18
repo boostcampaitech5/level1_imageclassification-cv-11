@@ -18,7 +18,7 @@ from torch.utils.tensorboard import SummaryWriter
 from dataset import MaskBaseDataset
 from loss import create_criterion
 import augmentation
-import model as mymodel
+import model as Models
 
 
 def seed_everything(seed):
@@ -29,7 +29,6 @@ def seed_everything(seed):
     torch.backends.cudnn.benchmark = False
     np.random.seed(seed)
     random.seed(seed)
-
 
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
@@ -68,7 +67,6 @@ def grid_image(np_images, gts, preds, n=16, shuffle=False):
 
     return figure
 
-
 def increment_path(path, exist_ok=False):
     """ Automatically increment path, i.e. runs/exp --> runs/exp0, runs/exp1 etc.
 
@@ -85,7 +83,6 @@ def increment_path(path, exist_ok=False):
         i = [int(m.groups()[0]) for m in matches if m]
         n = max(i) + 1 if i else 2
         return f"{path}{n}"
-
 
 def train(data_dir, model_dir, args):
     seed_everything(args.seed)
@@ -156,8 +153,7 @@ def train(data_dir, model_dir, args):
     i = 0
     train_loader, val_loader = fold(i)
     
-    # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-    model = mymodel.SingleOutputModel(model=model_module).to(device)
+    model = Models.SingleOutputModel(model=model_module).to(device)
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
@@ -301,7 +297,6 @@ if __name__ == '__main__':
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_MODEL_DIR', './model'))
-
 
     args = parser.parse_args()
     print(args)

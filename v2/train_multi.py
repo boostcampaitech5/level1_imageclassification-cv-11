@@ -18,7 +18,8 @@ from torch.utils.tensorboard import SummaryWriter
 from dataset import MaskBaseDataset
 from loss import create_criterion
 import augmentation
-import model as mymodel
+import model as Models
+
 
 def seed_everything(seed):
     torch.manual_seed(seed)
@@ -28,7 +29,6 @@ def seed_everything(seed):
     torch.backends.cudnn.benchmark = False
     np.random.seed(seed)
     random.seed(seed)
-
 
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
@@ -67,7 +67,6 @@ def grid_image(np_images, gts, preds, n=16, shuffle=False):
 
     return figure
 
-
 def increment_path(path, exist_ok=False):
     """ Automatically increment path, i.e. runs/exp --> runs/exp0, runs/exp1 etc.
 
@@ -84,7 +83,6 @@ def increment_path(path, exist_ok=False):
         i = [int(m.groups()[0]) for m in matches if m]
         n = max(i) + 1 if i else 2
         return f"{path}{n}"
-
 
 def train(data_dir, model_dir, args):
     seed_everything(args.seed)
@@ -122,7 +120,6 @@ def train(data_dir, model_dir, args):
 
     train_dataset.set_transform(transform['train'])
     val_dataset.set_transform(transform['val'])
-    
 
     # -- data_loader
     train_sets, _ = train_dataset.split_dataset(train_dataset)
@@ -155,8 +152,7 @@ def train(data_dir, model_dir, args):
     i = 0
     train_loader, val_loader = fold(i)
     
-    # model_module = getattr(import_module("model"), args.model)  # default: BaseModel
-    model = mymodel.MultiOutputModel(in_features=1000, model=model_module).to(device)
+    model = Models.MultiOutputModel(in_features=1000, model=model_module).to(device)
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
@@ -272,7 +268,6 @@ def train(data_dir, model_dir, args):
                 
                 loss = loss1 + loss2 + loss3 + loss4
 
-
                 loss_item = loss.item()
                 
                 pred1 = mask_outs.argmax(1).detach().cpu().numpy()
@@ -283,14 +278,9 @@ def train(data_dir, model_dir, args):
                 
                 val_loss_items.append(loss_item)
                 val_acc_items.append(acc_item/val_loader.batch_size)
-                
-                
-                
 
                 if figure is None:
-                    ######################
                     preds = torch.Tensor(pred1*6+pred2*3+pred3)
-                    ######################
                     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
                     inputs_np = dataset_module.denormalize_image(inputs_np, dataset.mean, dataset.std)
                     figure = grid_image(
