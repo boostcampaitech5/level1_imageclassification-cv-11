@@ -127,12 +127,16 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
     parser.add_argument('--resize', type=tuple, default=(512, 384), help='resize size for image when you trained (default: (512, 384))')
     parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: EfficientBase)')
+<<<<<<< HEAD
     parser.add_argument('--is_multi', type=bool, default='false', help='enable multi output classification (default: false)')
 =======
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for validing (default: 1000)')
     parser.add_argument('--resize', type=tuple, default=[128, 96], help='resize size for image when you trained (default: (96, 128))')
     parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: BaseModel)')
 >>>>>>> f29f573... add inference.py
+=======
+    parser.add_argument('--is_multi', type=bool, default=False, help='enable multi output classification (default: false)')
+>>>>>>> 190e32d... fix: change --is_multi option default value type
 
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
