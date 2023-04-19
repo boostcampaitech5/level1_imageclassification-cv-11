@@ -129,6 +129,7 @@ class MaskBaseDataset(Dataset):
         "normal": MaskLabels.NORMAL
     }
 
+<<<<<<< HEAD
     image_paths = []
     mask_labels = []
     gender_labels = []
@@ -139,11 +140,20 @@ class MaskBaseDataset(Dataset):
     age_num_labels= []
 >>>>>>> 3f8af03... add continuous age
 
+=======
+>>>>>>> 5b65f89... fix: resolve validation data leakage problem
     def __init__(self, data_dir, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
         self.data_dir = data_dir
         self.mean = mean
         self.std = std
         self.val_ratio = val_ratio
+        
+        self.image_paths = []
+        self.mask_labels = []
+        self.gender_labels = []
+        self.age_labels = []
+        self.age_num_labels= []
+        self.multi_class_label = []
 
         self.transform = None
         self.setup()
