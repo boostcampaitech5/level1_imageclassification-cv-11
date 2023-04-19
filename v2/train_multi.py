@@ -420,6 +420,6 @@ if __name__ == '__main__':
     dir = save_dir.split('/')[-1]
     
     # # wandb.init(project="test",name=f'use_age:{args.use_age}-multi:0-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-augmentation:{args.augmentation}-batch_size:{args.batch_size}-criterion:{args.criterion}-epoch:{args.epochs}-fold:{args.fold}-lr:{args.lr}-lr_decay_step:{args.lr_decay_step}-optimizer:{args.optimizer}-resize:{args.resize[0]}X{args.resize[1]}-seed:{args.seed}')
-    wandb.init(project='test',name=f'use_age:{args.use_age}-multi:{True}-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-exp:{dir}',config= config)
+    wandb.init(project='image-classification-challenge',name=f'use_age:{args.use_age}-multi:{True}-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-exp:{dir}',config= config)
 
     train(data_dir, model_dir,save_dir, args)
