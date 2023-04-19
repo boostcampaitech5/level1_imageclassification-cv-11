@@ -346,7 +346,7 @@ def train(data_dir, model_dir, save_dir, args):
             _val_f1 = f1_score(val_category_trues,val_category_preds, average='macro')
 
             wandb.log({'Train loss':_train_loss,'Train F1':_train_f1,'Train Acc':_train_accuracy,'Train loss 1' : _train_loss1,'Train loss 2' : _train_loss2,'Train loss 3' : _train_loss3,'Train loss 4':_train_loss4,'Train loss 123':_train_loss-_train_loss4,
-                   'Val loss':val_loss,'Val F1':_val_f1, 'Val Acc':val_acc,'Val loss 1' : _val_loss1,'Val loss 2' : _val_loss2,'Val loss 3' : _val_loss3,'Val loss 4':_val_loss4,'Val loss 123':val_loss-_val_loss4})      ## logging wandb
+                   'Val loss':val_loss,'Val F1':_val_f1, 'Val Acc':val_acc,'Val loss 1' : _val_loss1,'Val loss 2' : _val_loss2,'Val loss 3' : _val_loss3,'Val loss 4':_val_loss4,'Val loss 123':val_loss-_val_loss4,'Val best f1':max(_val_f1, best_val_f1)})      ## logging wandb
             
             
             
@@ -420,6 +420,6 @@ if __name__ == '__main__':
     dir = save_dir.split('/')[-1]
     
     # # wandb.init(project="test",name=f'use_age:{args.use_age}-multi:0-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-augmentation:{args.augmentation}-batch_size:{args.batch_size}-criterion:{args.criterion}-epoch:{args.epochs}-fold:{args.fold}-lr:{args.lr}-lr_decay_step:{args.lr_decay_step}-optimizer:{args.optimizer}-resize:{args.resize[0]}X{args.resize[1]}-seed:{args.seed}')
-    wandb.init(project='test',name=f'use_age:{args.use_age}-multi:{True}-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-exp:{dir}',config= config)
+    wandb.init(project='image-classification-challenge',name=f'use_age:{args.use_age}-multi:{True}-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-exp:{dir}',config= config)
 
     train(data_dir, model_dir,save_dir, args)
