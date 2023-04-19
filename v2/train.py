@@ -304,7 +304,7 @@ def train(data_dir, model_dir, save_dir, args):
             _val_f1 = f1_score(val_category_trues,val_category_preds, average='macro')
 
             wandb.log({'Train loss':_train_loss,'Train F1':_train_f1,'Train Acc':_train_accuracy,'Train loss 0' : _train_loss0,'Train loss 4':_train_loss4,
-                   'Val loss':val_loss,'Val F1':_val_f1, 'Val Acc':val_acc,'Val loss 0' : _val_loss0,'Val loss 4':_val_loss4,})      ## logging wandb
+                   'Val loss':val_loss,'Val F1':_val_f1, 'Val Acc':val_acc,'Val loss 0' : _val_loss0,'Val loss 4':_val_loss4,'Val best f1':max(_val_f1, best_val_f1)})      ## logging wandb
             
             
             if _val_f1 > best_val_f1:
