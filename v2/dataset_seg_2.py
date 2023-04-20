@@ -131,8 +131,8 @@ class MaskBaseDataset(Dataset):
 
     def __init__(self, data_dir,mean=(0.22367465, 0.19352587, 0.18368957), std=(0.27654092, 0.24772727, 0.23997965), val_ratio=0.2):
         self.data_dir = data_dir
-        self.mean = mean
-        self.std = std
+        self.mean =(0.22367465, 0.19352587, 0.18368957)
+        self.std = (0.27654092, 0.24772727, 0.23997965)
         self.val_ratio = val_ratio
         
         self.image_paths = []
