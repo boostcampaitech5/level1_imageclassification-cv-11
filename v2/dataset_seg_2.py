@@ -324,7 +324,7 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
 
 
 class TestDataset(Dataset):
-    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246)):
+    def __init__(self, img_paths, resize, mean=(0.22367465, 0.19352587, 0.18368957), std=(0.27654092, 0.24772727, 0.23997965)):
         self.img_paths = img_paths
         self.transform = Compose([
             Resize(resize, Image.BILINEAR),
