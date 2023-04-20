@@ -269,7 +269,7 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
         이후 `split_dataset` 에서 index 에 맞게 Subset 으로 dataset 을 분기합니다.
     """
 
-    def __init__(self, data_dir, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
+    def __init__(self, data_dir, mean=(0.22367465, 0.19352587, 0.18368957), std=(0.27654092, 0.24772727, 0.23997965), val_ratio=0.2):
         self.indices = defaultdict(list)
         super().__init__(data_dir, mean, std, val_ratio)
 
