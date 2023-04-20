@@ -33,7 +33,7 @@ def load_model(saved_model, device):
 
 
 @torch.no_grad()
-def inference(data_dir, model_dir, output_dir, args):
+def inference(seg_test_dir, info_dir , model_dir, output_dir, args):
     """
     """
     use_cuda = torch.cuda.is_available()
@@ -100,8 +100,8 @@ if __name__ == '__main__':
 
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
-    parser.add_argument('--seg_test_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval/seg_images'))
-    parser.add_argument('--info_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
+    parser.add_argument('--seg_test_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL_SEG', '/opt/ml/input/data/eval/seg_images'))
+    parser.add_argument('--info_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL_INFO', '/opt/ml/input/data/eval'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_CHANNEL_MODEL', './model/exp'))
     parser.add_argument('--output_dir', type=str, default=os.environ.get('SM_OUTPUT_DATA_DIR', './output'))
 
