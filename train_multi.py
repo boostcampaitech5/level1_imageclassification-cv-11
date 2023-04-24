@@ -99,18 +99,16 @@ def train(data_dir, model_dir, save_dir, args):
         data_dir=data_dir,
     )
     
-    mean, std = (0.56019265, 0.52410305, 0.50145299), (0.23308824, 0.24294489, 0.2456003)
+    # mean, std = (0.56019265, 0.52410305, 0.50145299), (0.23308824, 0.24294489, 0.2456003)
     
     train_dataset = MaskBaseDataset(
         data_dir=data_dir,
-        mean=mean,
-        std=std,
+        segmentation = args.seg
     )
 
     val_dataset = MaskBaseDataset(
         data_dir=data_dir,
-        mean=mean,
-        std=std,
+        segmentation = args.seg
     )
     
     num_classes = dataset.num_classes  # 18
