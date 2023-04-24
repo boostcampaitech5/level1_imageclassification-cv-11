@@ -130,6 +130,7 @@ class MaskBaseDataset(Dataset):
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     image_paths = []
     mask_labels = []
     gender_labels = []
@@ -143,11 +144,38 @@ class MaskBaseDataset(Dataset):
 =======
 >>>>>>> 5b65f89... fix: resolve validation data leakage problem
     def __init__(self, data_dir, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
+=======
+    def __init__(self, data_dir, val_ratio=0.2, segmentation = False):
+>>>>>>> 9ba4f2f... train, train_multi, dataset, inference
         self.data_dir = data_dir
-        self.mean = mean
-        self.std = std
+
         self.val_ratio = val_ratio
         
+        if segmentation == False : 
+            self._file_names = {
+                "mask1": MaskLabels.MASK,
+                "mask2": MaskLabels.MASK,
+                "mask3": MaskLabels.MASK,
+                "mask4": MaskLabels.MASK,
+                "mask5": MaskLabels.MASK,
+                "incorrect_mask": MaskLabels.INCORRECT,
+                "normal": MaskLabels.NORMAL
+            }
+            self.mean = (0.548, 0.504, 0.479)
+            self.std = (0.237, 0.247, 0.246)
+        else : #segmentation =True
+            self._file_names = {
+                "seg_mask1": MaskLabels.MASK,
+                "seg_mask2": MaskLabels.MASK,
+                "seg_mask3": MaskLabels.MASK,
+                "seg_mask4": MaskLabels.MASK,
+                "seg_mask5": MaskLabels.MASK,
+                "seg_incorrect_mask": MaskLabels.INCORRECT,
+                "seg_normal": MaskLabels.NORMAL
+            }
+            self.mean =(0.22367465, 0.19352587, 0.18368957)
+            self.std = (0.27654092, 0.24772727, 0.23997965)
+
         self.image_paths = []
         self.mask_labels = []
         self.gender_labels = []
@@ -345,13 +373,20 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
 
 
 class TestDataset(Dataset):
-    def __init__(self, img_paths, resize, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246)):
+    def __init__(self, img_paths, resize, segmentation = False):
         self.img_paths = img_paths
+        if segmentation == False : 
+            self.mean = (0.548, 0.504, 0.479)
+            self.std = (0.237, 0.247, 0.246)
+        else : 
+            self.mean = (0.22367465, 0.19352587, 0.18368957)
+            self.std = (0.27654092, 0.24772727, 0.23997965)
         self.transform = Compose([
             Resize(resize, Image.BILINEAR),
             ToTensor(),
-            Normalize(mean=mean, std=std),
+            Normalize(mean=self.mean, std=self.std),
         ])
+
 
     def __getitem__(self, index):
         image = Image.open(self.img_paths[index])

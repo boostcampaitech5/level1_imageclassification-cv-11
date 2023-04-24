@@ -45,15 +45,21 @@ def inference(data_dir, model_dir, output_dir, args):
     # num_classes = MaskBaseDataset.num_classes  # 18
     model = load_model(model_dir, device).to(device)
     model.eval()
-
-    img_root = os.path.join(data_dir, 'images')
+    if args.seg == False :
+        img_root = os.path.join(data_dir, 'images')
+    else : #segmentation True
+        img_root = os.path.join(data_dir, 'seg_images')
     info_path = os.path.join(data_dir, 'info.csv')
     info = pd.read_csv(info_path)
 
     img_paths = [os.path.join(img_root, img_id) for img_id in info.ImageID]
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     dataset = TestDataset(img_paths, args.resize)
+=======
+    dataset = TestDataset(img_paths, args.resize, args.seg)
+>>>>>>> 9ba4f2f... train, train_multi, dataset, inference
     
     loader = torch.utils.data.DataLoader(
 =======
@@ -136,8 +142,12 @@ if __name__ == '__main__':
 >>>>>>> f29f573... add inference.py
 =======
     parser.add_argument('--is_multi', type=bool, default=False, help='enable multi output classification (default: false)')
+<<<<<<< HEAD
 >>>>>>> 190e32d... fix: change --is_multi option default value type
 
+=======
+    parser.add_argument('--seg', type=bool, default = False, help='segmentation (default = False)')
+>>>>>>> 9ba4f2f... train, train_multi, dataset, inference
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
     parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_CHANNEL_MODEL', './model/exp'))
