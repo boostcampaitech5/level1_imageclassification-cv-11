@@ -1,18 +1,25 @@
-# pstage_01_image_classification
+# Gender and age classification for wearing mask image
+This project is the Naver Boost Camp CV11 team's submission code for the mask wearing status classification competition.
 
-## Getting Started    
-### Dependencies
+## 1. Introduction
+*이름 , **내용
+ 
+## 2. Environment
+- Ubuntu 18.04.5 LTS
 - torch==1.7.1
-- torchvision==0.8.2                                                              
+- torchvision==0.8.2
 
-### Install Requirements
+## 3. Install Requirements
 - `pip install -r requirements.txt`
 
-### Training
-- `SM_CHANNEL_TRAIN={YOUR_TRAIN_IMG_DIR} SM_MODEL_DIR={YOUR_MODEL_SAVING_DIR} python train.py`
+## 4. Usage
+1. Run the `level1_imageclassification-cv-11` Python module in your terminal.
+###  Training
+#### single
+- `python train.py`
+
+#### multi
+- `python train_multi.py`
 
 ### Inference
-- `SM_CHANNEL_EVAL={YOUR_EVAL_DIR} SM_CHANNEL_MODEL={YOUR_TRAINED_MODEL_DIR} SM_OUTPUT_DATA_DIR={YOUR_INFERENCE_OUTPUT_DIR} python inference.py`
-
-### Evaluation
-- `SM_GROUND_TRUTH_DIR={YOUR_GT_DIR} SM_OUTPUT_DATA_DIR={YOUR_INFERENCE_OUTPUT_DIR} python evaluation.py`
+- 'python inference.py
