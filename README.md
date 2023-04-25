@@ -100,8 +100,6 @@ The method of execution for this experiment is as follows.
 ## 4. Inference
 ### 4-1. Inference without segmentation image
 - `python inference.py`
-### 4-2. Inference with segmentation image
-- `python inference_seg_2.py`
 
 #### Key Options
 - `--data_dir` : input path
