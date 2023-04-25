@@ -4,6 +4,7 @@ import timm
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
 >>>>>>> c7e2be0... add multioutput model
 
 class BaseModel(nn.Module):
@@ -37,6 +38,8 @@ class BaseModel(nn.Module):
         return self.fc(x)
 
 
+=======
+>>>>>>> cad6495... model.py
 ############################## Backbone Models ##############################
 
 
