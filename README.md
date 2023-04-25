@@ -1,6 +1,6 @@
 # Gender and age classification for wearing mask image
 This project is the Naver Boost Camp CV11 team's submission code for the mask wearing status classification competition.
-
+When a picture of a person wearing a mask is given, it is a matter of classifying the person's age, sex, and whether he or she is wearing a mask.
 ### Team Members
 
 <div align="left">
@@ -77,6 +77,9 @@ This project is the Naver Boost Camp CV11 team's submission code for the mask we
 - `pip install -r requirements.txt`
 
 ## 3. Training
+To solve this problem, we conducted 18 classifications including gender, age, and whether to wear a mask, experimented with multi-output-classicaiton by setting each as a separate output, and conducted many experiments in the training process, such as removing the background of a given image through segmentation or adding regression loss for age. 
+The method of execution for this experiment is as follows.
+
 ### 3-1. single-output-classification
 - `python train.py`
 
@@ -84,7 +87,8 @@ This project is the Naver Boost Camp CV11 team's submission code for the mask we
 - `python train_multi.py`
 
 #### Key Options
-- `--save_dir` : save directory
+- `--save_dir` : save path
+- `--data_dir` : input path
 - `--use_age` : weight of mseloss(age)
 - `--seg` : enable segmentation
 - `--mislabel` : train with corrected label
@@ -94,7 +98,19 @@ This project is the Naver Boost Camp CV11 team's submission code for the mask we
 - `--epoch` : umber of epochs to train
 
 ## 4. Inference
+### 4-1. Inference without segmentation image
 - `python inference.py`
+### 4-2. Inference with segmentation image
+- `python inference_seg_2.py`
+
+#### Key Options
+- `--data_dir` : input path
+- `--model_dir` : model weight path
+- `--output_dir` : output path
+- `--is_multi` : enable multi output classification
+- `--model` : model type (default: EfficientNet B0)
+- `--batch_size` : input batch size for validing
+
 
 # result
 **Metric** : f1 score
