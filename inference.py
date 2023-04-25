@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-from dataset import TestDataset, MaskBaseDataset
+from dataset import TestDataset
 import model as Models
 
 
@@ -25,9 +25,6 @@ def load_model(saved_model, device):
 =======
 >>>>>>> f29f573... add inference.py
 
-    # tarpath = os.path.join(saved_model, 'best.tar.gz')
-    # tar = tarfile.open(tarpath, 'r:gz')
-    # tar.extractall(path=saved_model)
 
     model_path = os.path.join(saved_model, 'best.pth')
     model.load_state_dict(torch.load(model_path, map_location=device))
@@ -42,7 +39,6 @@ def inference(data_dir, model_dir, output_dir, args):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    # num_classes = MaskBaseDataset.num_classes  # 18
     model = load_model(model_dir, device).to(device)
     model.eval()
     if args.seg == False :
