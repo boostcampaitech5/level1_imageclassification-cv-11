@@ -244,8 +244,6 @@ class MaskBaseDataset(Dataset):
         #train_set, val_set = random_split(self, [n_train, n_val])
         return train_datasets, val_datasets
 
-
-
 class TestDataset(Dataset):
     def __init__(self, img_paths, resize, segmentation = False):
         self.img_paths = img_paths

@@ -20,7 +20,6 @@ import model as Models
 # import wandb
 from sklearn.metrics import f1_score, accuracy_score
 
-
 def seed_everything(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -69,15 +68,12 @@ def train(data_dir, model_dir, save_dir, args):
         segmentation= args.seg
     )
     
- 
-
     # -- augmentation
     transform = augmentation.get_transforms()  # default: BaseAugmentation
 
     train_dataset.set_transform(transform['train'])
     val_dataset.set_transform(transform['val'])
     
-
     # -- data_loader
     train_sets, _ = train_dataset.split_dataset(train_dataset)
     _ , val_sets = val_dataset.split_dataset(val_dataset)
@@ -230,8 +226,7 @@ def train(data_dir, model_dir, save_dir, args):
             val_loss = np.sum(val_loss_items) / len(val_loader)
             val_acc = np.mean(val_acc_items)
             best_val_loss = min(best_val_loss, val_loss)
-            
-                        
+                                   
             _train_f1 = f1_score(category_trues, category_preds, average='macro')
             _train_accuracy = accuracy_score(category_trues, category_preds)
 
@@ -266,15 +261,15 @@ if __name__ == '__main__':
     # Data and model checkpoints directories
     parser.add_argument('--seed', type=int, default=42, help='random seed (default: 42)')
     parser.add_argument('--epochs', type=int, default=50, help='number of epochs to train (default: 50)')
-    parser.add_argument('--dataset', type=str, default='MaskBaseDataset', help='dataset augmentation type (default: MaskBaseDataset)')
-    parser.add_argument('--augmentation', type=str, default='BaseAugmentation', help='data augmentation type (default: BaseAugmentation)')
-    parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
+    # parser.add_argument('--dataset', type=str, default='MaskBaseDataset', help='dataset augmentation type (default: MaskBaseDataset)')
+    # parser.add_argument('--augmentation', type=str, default='BaseAugmentation', help='data augmentation type (default: BaseAugmentation)')
+    # parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
     parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: EfficientBase)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
-    parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
+    # parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
     parser.add_argument('--lr_decay_step', type=int, default=20, help='learning rate scheduler deacy step (default: 20)')
     parser.add_argument('--log_interval', type=int, default=20, help='how many batches to wait before logging training status')
@@ -282,7 +277,7 @@ if __name__ == '__main__':
     parser.add_argument('--fold', default=1, help = 'kfold')
     parser.add_argument('--use_age', type=float, default=0, help='weight of mseloss(age) (default: 0)')
     parser.add_argument('--seg', type=bool, default=False, help='enable segmentation (default: False)')
-    parser.add_argument('--mislabel', type=bool, default=False, help='train with corrected label (default: False)')
+    # parser.add_argument('--mislabel', type=bool, default=False, help='train with corrected label (default: False)')
 
 
     # Container environment

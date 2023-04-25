@@ -13,15 +13,12 @@ import numpy as np
 import torch
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
-
 from dataset import MaskBaseDataset
 from loss import create_criterion
 import augmentation
 import model as Models
 # import wandb
 from sklearn.metrics import f1_score, accuracy_score
-
 
 def seed_everything(seed):
     torch.manual_seed(seed)
@@ -35,7 +32,6 @@ def seed_everything(seed):
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
-
 
 def increment_path(path, exist_ok=False):
     """ Automatically increment path, i.e. runs/exp --> runs/exp0, runs/exp1 etc.
@@ -62,9 +58,6 @@ def train(data_dir, model_dir, save_dir, args):
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # -- dataset
-    
-    
-   
     train_dataset = MaskBaseDataset(
         data_dir=data_dir,
         segmentation = args.seg
@@ -75,8 +68,6 @@ def train(data_dir, model_dir, save_dir, args):
         segmentation = args.seg
     )
     
-   
-
     # -- augmentation
     transform = augmentation.get_transforms()  # default: BaseAugmentation
 
@@ -225,8 +216,7 @@ def train(data_dir, model_dir, save_dir, args):
             val_loss2 = []
             val_loss3 = []
             val_loss4 = []
-            
-            
+                       
             for val_batch in val_loader:
                 inputs, labels, age_num_labels = val_batch
                 
@@ -239,7 +229,6 @@ def train(data_dir, model_dir, save_dir, args):
                 gender_labels = gender_labels.to(device)
                 age_labels = age_labels.to(device)
                 age_num_labels = age_num_labels.to(device)
-
                                 
                 mask_outs, gender_outs, age_outs, age_num_outs = model(inputs)
                 
@@ -308,15 +297,15 @@ if __name__ == '__main__':
     # Data and model checkpoints directories
     parser.add_argument('--seed', type=int, default=42, help='random seed (default: 42)')
     parser.add_argument('--epochs', type=int, default=50, help='number of epochs to train (default: 50)')
-    parser.add_argument('--dataset', type=str, default='MaskBaseDataset', help='dataset augmentation type (default: MaskBaseDataset)')
-    parser.add_argument('--augmentation', type=str, default='BaseAugmentation', help='data augmentation type (default: BaseAugmentation)')
-    parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
+    # parser.add_argument('--dataset', type=str, default='MaskBaseDataset', help='dataset augmentation type (default: MaskBaseDataset)')
+    # parser.add_argument('--augmentation', type=str, default='BaseAugmentation', help='data augmentation type (default: BaseAugmentation)')
+    # parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
     parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
     parser.add_argument('--model', type=str, default='EfficientBase', help='model type (default: EfficientBase)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
-    parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
+    # parser.add_argument('--val_ratio', type=float, default=0.2, help='ratio for validaton (default: 0.2)')
     parser.add_argument('--criterion', type=str, default='cross_entropy', help='criterion type (default: cross_entropy)')
     parser.add_argument('--lr_decay_step', type=int, default=20, help='learning rate scheduler deacy step (default: 20)')
     parser.add_argument('--log_interval', type=int, default=20, help='how many batches to wait before logging training status')
@@ -324,7 +313,7 @@ if __name__ == '__main__':
     parser.add_argument('--fold', default=1, help = 'kfold')
     parser.add_argument('--use_age', type=float, default=0, help='weight of mseloss(age) (default: 0)')
     parser.add_argument('--seg', type=bool, default=False, help='enable segmentation (default: False)')
-    parser.add_argument('--mislabel', type=bool, default=False, help='train with corrected label (default: False)')
+    # parser.add_argument('--mislabel', type=bool, default=False, help='train with corrected label (default: False)')
 
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
@@ -355,8 +344,6 @@ if __name__ == '__main__':
     #         'seed':args.seed}
     
     # dir = save_dir.split('/')[-1]
-    
-
     # wandb.init(project='image-classification-challenge-v2',name=f'use_age:{args.use_age}-multi:{True}-seg:{args.seg}-mislabel:{args.mislabel}-model:{args.model}-exp:{dir}',config= config)
 
     train(data_dir, model_dir,save_dir, args)
