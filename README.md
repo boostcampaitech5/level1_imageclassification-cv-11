@@ -83,6 +83,16 @@ This project is the Naver Boost Camp CV11 team's submission code for the mask we
 ### 3-2. multi-output-classification
 - `python train_multi.py`
 
+#### Key Options
+- `--save_dir` : save directory
+- `--use_age` : weight of mseloss(age)
+- `--seg` : enable segmentation
+- `--mislabel` : train with corrected label
+- `--model` : model type (default: EfficientNet B0)
+- `--batch_size` : batch size for training
+- `--criterion` : criterion type
+- `--epoch` : umber of epochs to train
+
 ## 4. Inference
 - `python inference.py`
 
@@ -99,4 +109,4 @@ This project is the Naver Boost Camp CV11 team's submission code for the mask we
 | ViT Tiny (Patch 16, 384) | 0.76766 |
 | ViT Small (Patch 16, 384)  | 0.77515 |
 
-**최종 모델 : Efficientnet B2**
+**Best model : Efficientnet B2**
