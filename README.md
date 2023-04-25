@@ -95,7 +95,7 @@ The method of execution for this experiment is as follows.
 - `--model` : model type (default: EfficientNet B0)
 - `--batch_size` : batch size for training
 - `--criterion` : criterion type
-- `--epoch` : umber of epochs to train
+- `--epoch` : number of epochs to train
 
 ## 4. Inference
 ### 4-1. Inference without segmentation image
