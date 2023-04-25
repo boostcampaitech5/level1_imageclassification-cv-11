@@ -64,26 +64,39 @@ This project is the Naver Boost Camp CV11 team's submission code for the mask we
 
 <br/>
 <div id="5"></div>
-
-## 1. Introduction
-*이름 , **내용
  
-## 2. Environment
-- Ubuntu 18.04.5 LTS
-- torch==1.7.1
-- torchvision==0.8.2
+# Environment
+- OS : Linux Ubuntu 18.04.5
+- GPU : Tesla V100 (32GB)
 
-## 3. Install Requirements
+# Usage
+## 1. git clone
+- `git clone https://github.com/boostcampaitech5/level1_imageclassification-cv-11.git`
+
+## 2. Install Requirements
 - `pip install -r requirements.txt`
 
-## 4. Usage
-1. Run the `level1_imageclassification-cv-11` Python module in your terminal.
-###  Training
-#### single
+## 3. Training
+### 3-1. single-output-classification
 - `python train.py`
 
-#### multi
+### 3-2. multi-output-classification
 - `python train_multi.py`
 
-### Inference
-- 'python inference.py
+## 4. Inference
+- `python inference.py`
+
+# result
+**Metric** : f1 score
+
+| Model       | f1 score    |
+| ----------- | ----------- |
+| EfficientNet B0 | 0.93093 |
+| ResNet 18  | 0.88177 |
+| ResNet 34  | 0.93165 |
+| EfficientNet B1 | 0.94594 |
+| EfficientNet B2 | 0.95842 |
+| ViT Tiny (Patch 16, 384) | 0.76766 |
+| ViT Small (Patch 16, 384)  | 0.77515 |
+
+**최종 모델 : Efficientnet B2**
