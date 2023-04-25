@@ -91,7 +91,6 @@ The method of execution for this experiment is as follows.
 - `--data_dir` : input path
 - `--use_age` : weight of mseloss(age)
 - `--seg` : enable segmentation
-- `--mislabel` : train with corrected label
 - `--model` : model type (default: EfficientNet B0)
 - `--batch_size` : batch size for training
 - `--criterion` : criterion type
