@@ -15,26 +15,11 @@ def get_transforms(need=('train', 'val'), img_size=(512, 384), mean=(0.548, 0.50
     Returns:
         transformations: Augmentation 함수들이 저장된 dictionary 입니다. transformations['train']은 train 데이터에 대한 augmentation 함수가 있습니다.
     """
-    """
-
-    추가 항목
-    Transpose(p=0.5),
-    #HorizontalFlip(p=0.5),
-    #VerticalFlip(p=0.5),
-    #ShiftScaleRotate(p=0.5),
-    ColorJitter(p=0.5),
-    RandomCrop(350, 350)
-    
-    """
     transformations = {}
     if 'train' in need:
         transformations['train'] = Compose([
             Resize(img_size[0], img_size[1], p=1.0),
             Transpose(p=0.5),
-            #HorizontalFlip(p=0.5),
-            #VerticalFlip(p=0.5),
-            #ShiftScaleRotate(p=0.5),
-            #ColorJitter(p=0.5),
             CenterCrop(384, 384),
             HueSaturationValue(hue_shift_limit=0.2, sat_shift_limit=0.2, val_shift_limit=0.2, p=0.5),
             RandomBrightnessContrast(brightness_limit=(-0.1, 0.1), contrast_limit=(-0.1, 0.1), p=0.5),
