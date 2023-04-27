@@ -15,11 +15,14 @@ timm==0.6.13
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 sklearn~=0.0
 
 albumentations==1.3.0
 timm==0.6.13
 =======
+=======
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
 sklearn~=0.0
 >>>>>>> c1eb4f8... add baselinev2
 =======
@@ -28,6 +31,7 @@ sklearn~=0.0
 albumentations==1.3.0
 timm==0.6.13
 >>>>>>> f029fa1... add dependencies
+<<<<<<< HEAD
 >>>>>>> 8345ca4... add dependencies
 =======
 sklearn~=0.0
@@ -35,3 +39,5 @@ sklearn~=0.0
 albumentations==1.3.0
 timm==0.6.13
 >>>>>>> f029fa1... add dependencies
+=======
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce

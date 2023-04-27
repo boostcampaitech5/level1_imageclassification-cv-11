@@ -74,16 +74,22 @@ _criterion_entrypoints = {
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     'mse' : nn.MSELoss,
 =======
+=======
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
 >>>>>>> c1eb4f8... add baselinev2
 =======
     'mse' : nn.MSELoss,
 >>>>>>> a66cf9d... add mse loss
+<<<<<<< HEAD
 >>>>>>> 7d6b614... add mse loss
 =======
     'mse' : nn.MSELoss,
 >>>>>>> a66cf9d... add mse loss
+=======
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
     'focal': FocalLoss,
     'label_smoothing': LabelSmoothingLoss,
     'f1': F1Loss

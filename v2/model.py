@@ -4,6 +4,7 @@ import torch.nn.functional as F
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -16,12 +17,16 @@ import torch.nn.functional as F
 =======
 <<<<<<< HEAD
 >>>>>>> 7bdb440... add multioutput model
+=======
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
 import timm
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 =======
 import timm
 >>>>>>> c7e2be0... add multioutput model
+<<<<<<< HEAD
 =======
 import timm
 >>>>>>> c7e2be0... add multioutput model
@@ -52,6 +57,26 @@ import timm
 =======
 import timm
 
+=======
+
+>>>>>>> c7e2be0... add multioutput model
+=======
+
+>>>>>>> c1eb4f8... add baselinev2
+=======
+import torchvision.models as models
+import timm
+
+classification_models = models.list_models(module=models)
+>>>>>>> 5f29eb0... feat: implement resnet18 model
+
+=======
+import timm
+=======
+
+>>>>>>> fc9ef1ba71c46daa92c33355d1e1041dda7e4429
+
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
 >>>>>>> 11047eb... refactor: delete unused package torchvision
 class BaseModel(nn.Module):
     def __init__(self, num_classes):
@@ -87,6 +112,7 @@ class BaseModel(nn.Module):
 # Custom Model Template
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -213,6 +239,8 @@ class MultiOutputModel(nn.Module):
         
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
 class EfficientBase(nn.Module):
     def __init__(self, num_classes=18):
         super().__init__()
@@ -318,6 +346,12 @@ class MultiOutputModel(nn.Module):
         self.branch_gender = nn.Linear(in_features=1000, out_features=2)
         self.branch_age_class = nn.Linear(in_features=1000, out_features=3)
         self.branch_age_val = nn.Linear(in_features=1000, out_features=1)
+=======
+class MyModel(nn.Module):
+    def __init__(self, num_classes):
+        super().__init__()
+
+>>>>>>> c1eb4f8... add baselinev2
         """
         1. 위와 같이 생성자의 parameter 에 num_claases 를 포함해주세요.
         2. 나만의 모델 아키텍쳐를 디자인 해봅니다.
@@ -325,12 +359,15 @@ class MultiOutputModel(nn.Module):
         """
 <<<<<<< HEAD
 >>>>>>> c7e2be0... add multioutput model
+=======
+>>>>>>> c1eb4f8... add baselinev2
 
     def forward(self, x):
         """
         1. 위에서 정의한 모델 아키텍쳐를 forward propagation 을 진행해주세요
         2. 결과로 나온 output 을 return 해주세요
         """
+<<<<<<< HEAD
         out = self.backbone(x)
         out_mask = self.branch_mask(out)
         out_gender = self.branch_gender(out)
@@ -338,7 +375,10 @@ class MultiOutputModel(nn.Module):
         out_age_num = self.branch_age_val(out)
         
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 686cc95... add efficientent model
+=======
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
 =======
 class EfficientBase(nn.Module):
     def __init__(self, num_classes=18):
@@ -416,6 +456,7 @@ class ViTSmall_Patch16_384(nn.Module):
 
         return out
 
+<<<<<<< HEAD
 
 # class MultiLabelModel(nn.module):
 #     def __init__(self):
@@ -435,6 +476,22 @@ class ViTSmall_Patch16_384(nn.Module):
 =======
 >>>>>>> c7e2be0... add multioutput model
 
+=======
+class MultiOutputModel(nn.Module):
+    def __init__(self, num_classes):        ## no num_classes in multi-output model
+        super().__init__()
+        self.backbone = timm.create_model('efficientnet_b0', pretrained=True, num_classes=1000)
+        self.branch_mask = nn.Linear(in_features=1000, out_features=3)
+        self.branch_gender = nn.Linear(in_features=1000, out_features=2)
+        self.branch_age_class = nn.Linear(in_features=1000, out_features=3)
+        self.branch_age_val = nn.Linear(in_features=1000, out_features=1)
+        """
+        1. 위와 같이 생성자의 parameter 에 num_claases 를 포함해주세요.
+        2. 나만의 모델 아키텍쳐를 디자인 해봅니다.
+        3. 모델의 output_dimension 은 num_classes 로 설정해주세요.
+        """
+        
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
     def forward(self, x):
         """
         1. 위에서 정의한 모델 아키텍쳐를 forward propagation 을 진행해주세요
@@ -447,6 +504,10 @@ class ViTSmall_Patch16_384(nn.Module):
         out_age_num = self.branch_age_val(out)
         
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
 >>>>>>> 686cc95... add efficientent model
 #     def forward(self, x):
 #          """
@@ -459,6 +520,7 @@ class ViTSmall_Patch16_384(nn.Module):
 #         out_age_class = self.branch_age_class(out)
 #         out_age_num = self.branch_age_val(out)
         
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -492,8 +554,25 @@ class ViTSmall_Patch16_384(nn.Module):
 #         return out_mask, out_gender, out_age_class, out_age_num
 >>>>>>> 686cc95... add efficientent model
 =======
+=======
+>>>>>>> 607062c14fae85d0d60a4a69b342af7da849a3ce
 #         return out_mask, out_gender, out_age_class, out_age_num
 >>>>>>> 5f29eb0... feat: implement resnet18 model
 =======
         return out_mask, out_gender, out_age_class, out_age_num
 >>>>>>> c7e2be0... add multioutput model
+=======
+        return x
+>>>>>>> c1eb4f8... add baselinev2
+=======
+#         return out_mask, out_gender, out_age_class, out_age_num
+>>>>>>> 686cc95... add efficientent model
+=======
+#         return out_mask, out_gender, out_age_class, out_age_num
+>>>>>>> 5f29eb0... feat: implement resnet18 model
+=======
+        return out_mask, out_gender, out_age_class, out_age_num
+>>>>>>> c7e2be0... add multioutput model
+=======
+        return out_mask, out_gender, out_age_class, out_age_num
+>>>>>>> fc9ef1ba71c46daa92c33355d1e1041dda7e4429
