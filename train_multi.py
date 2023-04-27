@@ -326,6 +326,8 @@ if __name__ == '__main__':
     model_dir = args.model_dir
     save_dir = increment_path(os.path.join(model_dir, args.name))
     
+    os.makedirs(save_dir, exist_ok=True)
+    
     # config = {'save_dir' : save_dir,
     #         'use_age': args.use_age,
     #         'multi':True, 
