@@ -1,6 +1,8 @@
 # Gender and age classification for wearing mask image
+
 This project is the Naver Boost Camp CV11 team's submission code for the mask wearing status classification competition.
 When a picture of a person wearing a mask is given, it is a matter of classifying the person's age, sex, and whether he or she is wearing a mask.
+
 ### Team Members
 
 <div align="left">
@@ -70,23 +72,30 @@ When a picture of a person wearing a mask is given, it is a matter of classifyin
 - GPU : Tesla V100 (32GB)
 
 # Usage
+
 ## 1. git clone
+
 - `git clone https://github.com/boostcampaitech5/level1_imageclassification-cv-11.git`
 
 ## 2. Install Requirements
+
 - `pip install -r requirements.txt`
 
 ## 3. Training
-To solve this problem, we conducted 18 classifications including gender, age, and whether to wear a mask, experimented with multi-output-classicaiton by setting each as a separate output, and conducted many experiments in the training process, such as removing the background of a given image through segmentation or adding regression loss for age. 
+
+To solve this problem, we conducted 18 classifications including gender, age, and whether to wear a mask, experimented with multi-output-classicaiton by setting each as a separate output, and conducted many experiments in the training process, such as removing the background of a given image through segmentation or adding regression loss for age.
 The method of execution for this experiment is as follows.
 
 ### 3-1. single-output-classification
+
 - `python train.py`
 
 ### 3-2. multi-output-classification
+
 - `python train_multi.py`
 
 #### Key Options
+
 - `--save_dir` : save path
 - `--data_dir` : input path
 - `--use_age` : weight of mseloss(age)
@@ -97,10 +106,13 @@ The method of execution for this experiment is as follows.
 - `--epoch` : number of epochs to train
 
 ## 4. Inference
+
 ### 4-1. Inference without segmentation image
+
 - `python inference.py`
 
 #### Key Options
+
 - `--data_dir` : input path
 - `--model_dir` : model weight path
 - `--output_dir` : output path
@@ -108,18 +120,18 @@ The method of execution for this experiment is as follows.
 - `--model` : model type (default: EfficientNet B0)
 - `--batch_size` : input batch size for validing
 
-
 # result
+
 **Metric** : f1 score
 
-| Model       | f1 score    |
-| ----------- | ----------- |
-| EfficientNet B0 | 0.93093 |
-| ResNet 18  | 0.88177 |
-| ResNet 34  | 0.93165 |
-| EfficientNet B1 | 0.94594 |
-| EfficientNet B2 | 0.95842 |
-| ViT Tiny (Patch 16, 384) | 0.76766 |
-| ViT Small (Patch 16, 384)  | 0.77515 |
+| Model                     | f1 score |
+| ------------------------- | -------- |
+| EfficientNet B0           | 0.93093  |
+| ResNet 18                 | 0.88177  |
+| ResNet 34                 | 0.93165  |
+| EfficientNet B1           | 0.94594  |
+| EfficientNet B2           | 0.95842  |
+| ViT Tiny (Patch 16, 384)  | 0.76766  |
+| ViT Small (Patch 16, 384) | 0.77515  |
 
 **Best model : Efficientnet B2**
