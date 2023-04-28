@@ -10,13 +10,10 @@ from PIL import Image
 from torch.utils.data import Dataset, Subset, random_split
 from torchvision.transforms import Resize, ToTensor, Normalize, Compose, CenterCrop
 
-
-
 class MaskLabels(int, Enum):
     MASK = 0
     INCORRECT = 1
     NORMAL = 2
-
 
 class GenderLabels(int, Enum):
     MALE = 0
@@ -31,7 +28,6 @@ class GenderLabels(int, Enum):
             return cls.FEMALE
         else:
             raise ValueError(f"Gender value should be either 'male' or 'female', {value}")
-
 
 class AgeLabels(int, Enum):
     YOUNG = 0
@@ -63,31 +59,11 @@ class AgeNumLabels(int, Enum):
 
         return value
 
-
 class MaskBaseDataset(Dataset):
     num_classes = 3 * 2 * 3
 
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-    image_paths = []
-    mask_labels = []
-    gender_labels = []
-    age_labels = []
-<<<<<<< HEAD
-    multi_class_label = []
-=======
-    age_num_labels= []
->>>>>>> 3f8af03... add continuous age
-
-=======
->>>>>>> 5b65f89... fix: resolve validation data leakage problem
-    def __init__(self, data_dir, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
-=======
     def __init__(self, data_dir, val_ratio=0.2, segmentation = False):
->>>>>>> 9ba4f2f... train, train_multi, dataset, inference
         self.data_dir = data_dir
-
         self.val_ratio = val_ratio
         
         if segmentation == False : 
@@ -150,11 +126,8 @@ class MaskBaseDataset(Dataset):
                 self.mask_labels.append(mask_label)
                 self.gender_labels.append(gender_label)
                 self.age_labels.append(age_label)
-<<<<<<< HEAD
                 self.multi_class_label.append(mask_label * 6 + gender_label * 3 + age_label)
-=======
                 self.age_num_labels.append(age_num_label)
->>>>>>> 3f8af03... add continuous age
 
     def calc_statistics(self):
         has_statistics = self.mean is not None and self.std is not None
@@ -177,16 +150,8 @@ class MaskBaseDataset(Dataset):
         assert self.transform is not None, ".set_tranform 메소드를 이용하여 transform 을 주입해주세요"
 
         image = self.read_image(index)
-        mask_label = self.get_mask_label(index)
-        gender_label = self.get_gender_label(index)
-        age_label = self.get_age_label(index)
-<<<<<<< HEAD
         multi_class_label = self.multi_class_label[index]
-=======
         age_num_label = self.get_age_num_label(index)
-        
-        multi_class_label = self.encode_multi_class(mask_label, gender_label, age_label)
->>>>>>> 3f8af03... add continuous age
 
         image_transform = self.transform(image=image)
         return image_transform, multi_class_label, age_num_label
@@ -233,32 +198,25 @@ class MaskBaseDataset(Dataset):
         for train_indices, val_indices in skf.split(dataset, np.array(dataset.multi_class_label)%6):
             train_datasets.append(torch.utils.data.Subset(dataset, train_indices))
             val_datasets.append(torch.utils.data.Subset(dataset, val_indices))
-        """
-        데이터셋을 train 과 val 로 나눕니다,
-        pytorch 내부의 torch.utils.data.random_split 함수를 사용하여
-        torch.utils.data.Subset 클래스 둘로 나눕니다.
-        구현이 어렵지 않으니 구글링 혹은 IDE (e.g. pycharm) 의 navigation 기능을 통해 코드를 한 번 읽어보는 것을 추천드립니다^^
-        """
-        #n_val = int(len(self) * self.val_ratio)
-        #n_train = len(self) - n_val
-        #train_set, val_set = random_split(self, [n_train, n_val])
+
         return train_datasets, val_datasets
 
 class TestDataset(Dataset):
     def __init__(self, img_paths, resize, segmentation = False):
         self.img_paths = img_paths
-        if segmentation == False : 
+
+        if segmentation == False :
             self.mean = (0.548, 0.504, 0.479)
             self.std = (0.237, 0.247, 0.246)
         else : 
             self.mean = (0.22367465, 0.19352587, 0.18368957)
             self.std = (0.27654092, 0.24772727, 0.23997965)
+
         self.transform = Compose([
             Resize(resize, Image.BILINEAR),
             ToTensor(),
             Normalize(mean=self.mean, std=self.std),
         ])
-
 
     def __getitem__(self, index):
         image = Image.open(self.img_paths[index])
